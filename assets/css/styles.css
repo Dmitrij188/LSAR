@@ -86,6 +86,7 @@
     .scheme-note { margin: 6px 0 12px; color: var(--muted); font-size: 13px; }
     /* Модалка для добавления узла */
     .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 20; }
+    .modal-backdrop.hidden { display: none; }
     .modal { background: #fff; border-radius: 10px; padding: 16px; width: min(680px, 96vw); max-height: 90vh; overflow-y: auto; box-shadow: 0 6px 18px rgba(0,0,0,0.2); }
     .modal h3 { margin-top: 0; }
     .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 12px; }
