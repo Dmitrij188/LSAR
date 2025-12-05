@@ -1,0 +1,98 @@
+:root {
+      --bg: #f5f7fa;
+      --card: #ffffff;
+      --accent: #0f6ab4;
+      --border: #d6dde6;
+      --text: #1f2a44;
+      --muted: #62708a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    header {
+      background: linear-gradient(90deg, #0f6ab4, #1e88e5);
+      color: #fff;
+      padding: 16px 24px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+    header h1 { margin: 0; font-size: 22px; }
+    .container { padding: 20px 24px 60px; max-width: 1280px; margin: 0 auto; }
+    .images-block { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin: 16px 0 24px; }
+    figure { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.06); }
+    figure img { width: 100%; border-radius: 6px; }
+    figure figcaption { margin-top: 8px; font-size: 13px; font-style: italic; color: var(--muted); }
+    .tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    .tab-btn {
+      padding: 10px 14px;
+      background: #e6effa;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    .tab-btn.active { background: var(--accent); color: #fff; border-color: #0f6ab4; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); margin-bottom: 16px; }
+    h2 { margin-top: 0; color: var(--text); }
+    p.note { margin-top: -6px; color: var(--muted); font-style: italic; font-size: 13px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    th, td { border: 1px solid var(--border); padding: 8px 10px; text-align: left; font-size: 14px; }
+    th { background: #eef3fb; color: var(--text); }
+    tr:nth-child(even) { background: #fafbfe; }
+    label { display: block; margin-top: 10px; font-weight: 600; font-size: 14px; }
+    input[type="text"], input[type="date"], select, textarea {
+      width: 100%; padding: 8px; margin-top: 4px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; background: #fff;
+    }
+    textarea { resize: vertical; min-height: 70px; }
+    .btn {
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: var(--accent);
+      border: none;
+      color: #fff;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .btn:hover { background: #0d5ea3; }
+    .hidden { display: none; }
+    .flex { display: flex; gap: 16px; flex-wrap: wrap; }
+    .grow { flex: 1 1 320px; }
+    .status-select { width: 100%; }
+    .tag { display: inline-block; padding: 3px 8px; border-radius: 12px; background: #eef3fb; color: var(--text); font-size: 12px; margin-right: 6px; margin-bottom: 4px; }
+    .inline { display: inline-block; margin-right: 12px; }
+    /* Секция интерактивной схемы */
+    .scheme-layout { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-start; }
+    #scheme-container { position: relative; width: 100%; max-width: 860px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+    #scheme-container img { width: 100%; display: block; }
+    .scheme-area { flex: 1 1 480px; min-width: 320px; }
+    .scheme-info { flex: 1 1 320px; min-width: 280px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+    .scheme-node-marker { position: absolute; width: 18px; height: 18px; border-radius: 50%; background: #ff7043; border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.3); cursor: pointer; transform: translate(-50%, -50%); transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease; }
+    .scheme-node-marker:hover { transform: translate(-50%, -50%) scale(1.08); }
+    .scheme-node-marker.selected { background: #0f6ab4; box-shadow: 0 0 0 3px rgba(15, 106, 180, 0.15); }
+    .scheme-node-marker.related-node { background: #8ec5ff; }
+    .scheme-tooltip { position: absolute; top: -8px; left: 50%; transform: translate(-50%, -100%); background: rgba(0,0,0,0.8); color: #fff; padding: 8px 10px; border-radius: 6px; font-size: 12px; width: 220px; pointer-events: none; z-index: 3; box-shadow: 0 2px 6px rgba(0,0,0,0.25); }
+    .scheme-tooltip strong { display: block; margin-bottom: 4px; }
+    .scheme-panel-list { padding-left: 18px; margin-top: 4px; }
+    .badge { display: inline-block; padding: 3px 8px; background: #eef3fb; border: 1px solid var(--border); border-radius: 12px; font-size: 12px; margin-right: 6px; margin-bottom: 6px; cursor: pointer; }
+    .scheme-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .scheme-note { margin: 6px 0 12px; color: var(--muted); font-size: 13px; }
+    /* Модалка для добавления узла */
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 20; }
+    .modal { background: #fff; border-radius: 10px; padding: 16px; width: min(680px, 96vw); max-height: 90vh; overflow-y: auto; box-shadow: 0 6px 18px rgba(0,0,0,0.2); }
+    .modal h3 { margin-top: 0; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 12px; }
+    .pill-toggle { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; background: #eef3fb; border-radius: 999px; border: 1px solid var(--border); }
+    .pill-toggle input { margin: 0; width: 18px; height: 18px; }
+    .ghost-btn { padding: 8px 12px; border-radius: 6px; background: #eef3fb; border: 1px solid var(--border); cursor: pointer; }
+    @media (max-width: 768px) {
+      .tabs { flex-direction: column; }
+      th, td { font-size: 13px; }
+    }
