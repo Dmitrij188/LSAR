@@ -75,6 +75,30 @@
     .status-select { width: 100%; }
     .tag { display: inline-block; padding: 3px 8px; border-radius: 12px; background: #eef3fb; color: var(--text); font-size: 12px; margin-right: 6px; margin-bottom: 4px; }
     .inline { display: inline-block; margin-right: 12px; }
+    /* Секция интерактивной схемы */
+    .scheme-layout { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-start; }
+    #scheme-container { position: relative; width: 100%; max-width: 860px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+    #scheme-container img { width: 100%; display: block; }
+    .scheme-area { flex: 1 1 480px; min-width: 320px; }
+    .scheme-info { flex: 1 1 320px; min-width: 280px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+    .scheme-node-marker { position: absolute; width: 18px; height: 18px; border-radius: 50%; background: #ff7043; border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.3); cursor: pointer; transform: translate(-50%, -50%); transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease; }
+    .scheme-node-marker:hover { transform: translate(-50%, -50%) scale(1.08); }
+    .scheme-node-marker.selected { background: #0f6ab4; box-shadow: 0 0 0 3px rgba(15, 106, 180, 0.15); }
+    .scheme-node-marker.related-node { background: #8ec5ff; }
+    .scheme-tooltip { position: absolute; top: -8px; left: 50%; transform: translate(-50%, -100%); background: rgba(0,0,0,0.8); color: #fff; padding: 8px 10px; border-radius: 6px; font-size: 12px; width: 220px; pointer-events: none; z-index: 3; box-shadow: 0 2px 6px rgba(0,0,0,0.25); }
+    .scheme-tooltip strong { display: block; margin-bottom: 4px; }
+    .scheme-panel-list { padding-left: 18px; margin-top: 4px; }
+    .badge { display: inline-block; padding: 3px 8px; background: #eef3fb; border: 1px solid var(--border); border-radius: 12px; font-size: 12px; margin-right: 6px; margin-bottom: 6px; cursor: pointer; }
+    .scheme-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .scheme-note { margin: 6px 0 12px; color: var(--muted); font-size: 13px; }
+    /* Модалка для добавления узла */
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 20; }
+    .modal { background: #fff; border-radius: 10px; padding: 16px; width: min(680px, 96vw); max-height: 90vh; overflow-y: auto; box-shadow: 0 6px 18px rgba(0,0,0,0.2); }
+    .modal h3 { margin-top: 0; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 12px; }
+    .pill-toggle { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; background: #eef3fb; border-radius: 999px; border: 1px solid var(--border); }
+    .pill-toggle input { margin: 0; width: 18px; height: 18px; }
+    .ghost-btn { padding: 8px 12px; border-radius: 6px; background: #eef3fb; border: 1px solid var(--border); cursor: pointer; }
     @media (max-width: 768px) {
       .tabs { flex-direction: column; }
       th, td { font-size: 13px; }
@@ -103,6 +127,7 @@
       <button class="tab-btn" data-target="tab-cr">Изменения (ЗИ / CR)</button>
       <button class="tab-btn" data-target="tab-audit">Аудиты</button>
       <button class="tab-btn" data-target="tab-baseline">Baseline и трассировка</button>
+      <button class="tab-btn" data-target="tab-scheme">Интерактивная схема</button>
     </div>
 
     <!-- Раздел ЭК -->
@@ -353,6 +378,72 @@
         </tbody>
       </table>
     </section>
+
+    <!-- Раздел интерактивной схемы -->
+    <section id="tab-scheme" class="card hidden">
+      <h2>Интерактивная схема</h2>
+      <p class="note">Визуализация электрической схемы ЛСАР с привязкой к ЭК, ЗИ и аудитам.</p>
+      <div class="pill-toggle" style="margin-bottom:10px;">
+        <input type="checkbox" id="schemeEditToggle" />
+        <label for="schemeEditToggle" style="margin:0; font-weight:600;">Режим добавления новых ЭК</label>
+      </div>
+      <p class="scheme-note">В режиме добавления клик по схеме открывает форму для создания нового узла и привязки его к существующим ЭК.</p>
+      <div class="scheme-layout">
+        <div class="scheme-area">
+          <div id="scheme-container">
+            <img id="lsar-scheme" src="lsar-scheme.png" alt="Схема ЛСАР" />
+            <!-- Маркеры узлов будут добавлены скриптом -->
+          </div>
+        </div>
+        <aside class="scheme-info" id="scheme-info-panel">
+          <h3 id="schemeInfoTitle">Выберите элемент на схеме</h3>
+          <p id="schemeInfoDesc" class="scheme-note">Наведите на маркер для краткой подсказки или кликните, чтобы открыть карточку узла.</p>
+          <div id="schemeInfoContent"></div>
+        </aside>
+      </div>
+    </section>
+  </div>
+
+  <!-- Модальное окно добавления узла на схеме -->
+  <div id="schemeModal" class="modal-backdrop hidden">
+    <div class="modal">
+      <h3>Новый элемент схемы</h3>
+      <form id="schemeNodeForm" class="flex">
+        <div class="grow">
+          <label for="schemeEcCode">Код ЭК *</label>
+          <input type="text" id="schemeEcCode" required />
+        </div>
+        <div class="grow">
+          <label for="schemeEcCategory">Категория *</label>
+          <select id="schemeEcCategory" required>
+            <option value="">Выберите</option>
+            <option value="HW">HW</option>
+            <option value="SW">SW</option>
+            <option value="DOC">DOC</option>
+          </select>
+        </div>
+        <div class="grow">
+          <label for="schemeLabel">Название / Label *</label>
+          <input type="text" id="schemeLabel" required />
+        </div>
+        <div class="grow" style="flex-basis:100%;">
+          <label for="schemeDesc">Краткое описание</label>
+          <textarea id="schemeDesc" rows="3"></textarea>
+        </div>
+        <div class="grow" style="flex-basis:100%;">
+          <label>Связать с существующими ЭК</label>
+          <div id="schemeEcLinks" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
+        </div>
+        <div class="grow">
+          <label>Координаты</label>
+          <input type="text" id="schemeCoords" disabled />
+        </div>
+      </form>
+      <div class="modal-actions">
+        <button type="button" class="ghost-btn" id="closeSchemeModal">Отмена</button>
+        <button type="button" class="btn" id="saveSchemeNode">Сохранить</button>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -444,10 +535,112 @@
       }
     ];
 
+    // === Интерактивная модель схемы ===
+    // schemeNodes хранит координаты и связи узлов на схеме, привязанные к реальным ЭК и аудитам
+    let schemeNodes = [
+      {
+        id: 'ESP32',
+        label: 'ESP32 DevKit',
+        ecCodes: ['LSAR-SW-01', 'LSAR-SW-03', 'LSAR-DOC-04'],
+        type: 'HW',
+        xPercent: 28,
+        yPercent: 52,
+        description: 'Контроллер ESP32, управляющий насосом, вентиляторами, нагревателем и сбором данных с датчиков.',
+        history: [
+          '2025-09-01: установка базовой прошивки v1.0',
+          '2025-12-01: обновление до прошивки v1.1 (улучшение PID)'
+        ],
+        audits: ['INT-2025-1']
+      },
+      {
+        id: 'PUMP',
+        label: 'Циркуляционный насос 24В',
+        ecCodes: ['LSAR-HW-01'],
+        type: 'HW',
+        xPercent: 24,
+        yPercent: 70,
+        description: 'Насос циркуляционный 24 В, 19 Вт, обеспечивает поток теплоносителя в контуре.',
+        history: [],
+        audits: ['INT-2025-1']
+      },
+      {
+        id: 'HEATER',
+        label: 'Погружной нагреватель',
+        ecCodes: ['LSAR-HW-03'],
+        type: 'HW',
+        xPercent: 63,
+        yPercent: 72,
+        description: 'Основной нагреватель теплоносителя в баке.',
+        history: ['2025-08-15: монтаж нагревателя Rev A'],
+        audits: []
+      },
+      {
+        id: 'RADIATOR',
+        label: 'Радиатор с вентиляторами',
+        ecCodes: ['LSAR-HW-04'],
+        type: 'HW',
+        xPercent: 82,
+        yPercent: 26,
+        description: 'Блок охлаждения с двумя вентиляторами для сброса тепла.',
+        history: ['2025-10-01: калибровка оборотов вентиляторов'],
+        audits: []
+      },
+      {
+        id: 'TEMP',
+        label: 'Датчики температуры',
+        ecCodes: ['LSAR-HW-05'],
+        type: 'HW',
+        xPercent: 70,
+        yPercent: 55,
+        description: 'Цифровые датчики DS18B20 в контуре и баке.',
+        history: ['2025-11-10: проверка калибровки датчиков'],
+        audits: ['INT-2025-1']
+      },
+      {
+        id: 'PRESSURE',
+        label: 'Датчик давления EN837-1',
+        ecCodes: ['LSAR-HW-06'],
+        type: 'HW',
+        xPercent: 52,
+        yPercent: 38,
+        description: 'Манометрический датчик давления на подаче.',
+        history: [],
+        audits: []
+      },
+      {
+        id: 'FLOW',
+        label: 'Расходомер',
+        ecCodes: ['LSAR-HW-07'],
+        type: 'HW',
+        xPercent: 42,
+        yPercent: 76,
+        description: 'Датчик расхода теплоносителя для контроля потока.',
+        history: ['2025-11-20: калибровка расходомера'],
+        audits: []
+      },
+      {
+        id: 'MOSFET',
+        label: 'Плата MOSFET силовой коммутации',
+        ecCodes: ['LSAR-HW-09'],
+        type: 'HW',
+        xPercent: 18,
+        yPercent: 45,
+        description: 'Модуль коммутации нагрузок (насос, вентиляторы, нагреватель).',
+        history: ['2025-10-05: добавлена маркировка каналов'],
+        audits: ['INT-2025-1']
+      }
+    ];
+
     // === Вспомогательные функции отрисовки таблиц ===
     const ecTableBody = document.querySelector('#ecTable tbody');
     const cmdbEcTableBody = document.querySelector('#cmdbEcTable tbody');
     const searchEcInput = document.getElementById('searchEc');
+
+    function switchMainTab(targetId) {
+      document.querySelectorAll('#mainTabs .tab-btn').forEach(b => b.classList.toggle('active', b.dataset.target === targetId));
+      document.querySelectorAll('section').forEach(sec => sec.classList.add('hidden'));
+      document.getElementById(targetId)?.classList.remove('hidden');
+    }
 
     function renderEcTable(filter = '') {
       const rows = ecData
@@ -457,6 +650,216 @@
       ecTableBody.innerHTML = rows || '<tr><td colspan="6">Ничего не найдено</td></tr>';
       cmdbEcTableBody.innerHTML = rows || '<tr><td colspan="6">Ничего не найдено</td></tr>';
     }
+
+    // === Интерактивная схема: работа с DOM, маркерами и панелью ===
+    const schemeContainer = document.getElementById('scheme-container');
+    const schemeImage = document.getElementById('lsar-scheme');
+    const schemeInfoTitle = document.getElementById('schemeInfoTitle');
+    const schemeInfoDesc = document.getElementById('schemeInfoDesc');
+    const schemeInfoContent = document.getElementById('schemeInfoContent');
+    const schemeEditToggle = document.getElementById('schemeEditToggle');
+    const schemeModal = document.getElementById('schemeModal');
+    const schemeNodeForm = document.getElementById('schemeNodeForm');
+    const schemeEcLinks = document.getElementById('schemeEcLinks');
+    const schemeEcCodeInput = document.getElementById('schemeEcCode');
+    const schemeEcCategoryInput = document.getElementById('schemeEcCategory');
+    const schemeLabelInput = document.getElementById('schemeLabel');
+    const schemeDescInput = document.getElementById('schemeDesc');
+    const schemeCoordsInput = document.getElementById('schemeCoords');
+    const schemeSaveBtn = document.getElementById('saveSchemeNode');
+    const schemeCloseBtn = document.getElementById('closeSchemeModal');
+    let pendingCoords = null;
+    let selectedNodeId = null;
+
+    function renderSchemeEcLinks() {
+      schemeEcLinks.innerHTML = ecData
+        .map(ec => `<label class="inline"><input type="checkbox" value="${ec.code}" /> ${ec.code}</label>`)
+        .join('');
+    }
+
+    function hideSchemeTooltip(marker) {
+      const tooltip = marker.querySelector('.scheme-tooltip');
+      if (tooltip) tooltip.remove();
+    }
+
+    function showSchemeTooltip(marker, node) {
+      hideSchemeTooltip(marker);
+      const tooltip = document.createElement('div');
+      tooltip.className = 'scheme-tooltip';
+      tooltip.innerHTML = `<strong>${node.label}</strong><div>${node.description}</div><div>ЭК: ${node.ecCodes.join(', ')}</div>`;
+      marker.appendChild(tooltip);
+    }
+
+    function updateSchemeHighlights(node) {
+      const relatedCodes = new Set(node.ecCodes);
+      schemeContainer.querySelectorAll('.scheme-node-marker').forEach(marker => {
+        const markerId = marker.dataset.nodeId;
+        const markerNode = schemeNodes.find(n => n.id === markerId);
+        marker.classList.toggle('selected', markerId === node.id);
+        const hasIntersection = markerNode && markerNode.ecCodes.some(code => relatedCodes.has(code));
+        marker.classList.toggle('related-node', markerId !== node.id && hasIntersection);
+      });
+    }
+
+    function renderSchemeInfo(node) {
+      schemeInfoTitle.textContent = `${node.label} (${node.ecCodes.join(', ')})`;
+      schemeInfoDesc.textContent = node.description;
+
+      const linkedEcBadges = node.ecCodes
+        .map(code => {
+          const ec = ecData.find(item => item.code === code);
+          const category = ec ? ec.category : '—';
+          return `<span class="badge" data-ec-code="${code}">${code} (${category})</span>`;
+        })
+        .join(' ');
+
+      const historyHtml = node.history.length
+        ? node.history.map(item => `<li>${item}</li>`).join('')
+        : '<li>История пока пуста</li>';
+
+      const nodeCr = changeRequests.filter(cr => cr.impacted.some(code => node.ecCodes.includes(code)));
+      const crHtml = nodeCr.length
+        ? nodeCr.map(cr => `<li><a href="#" data-cr-link="${cr.number}">${cr.number}</a> — ${cr.desc}</li>`).join('')
+        : '<li>Нет связанных ЗИ</li>';
+
+      const nodeAudits = audits.filter(a => node.audits?.includes(a.id));
+      const auditHtml = nodeAudits.length
+        ? nodeAudits.map(a => `<li><a href="#" data-audit-link="${a.id}">${a.id}</a> — ${a.object}</li>`).join('')
+        : '<li>Нет связанных аудитов</li>';
+
+      schemeInfoContent.innerHTML = `
+        <p><strong>Описание:</strong> ${node.description}</p>
+        <p><strong>Связанные ЭК:</strong> ${linkedEcBadges || '—'}</p>
+        <p><strong>История изменений:</strong></p>
+        <ul class="scheme-panel-list">${historyHtml}</ul>
+        <p><strong>Связанные ЗИ / CR:</strong></p>
+        <ul class="scheme-panel-list">${crHtml}</ul>
+        <p><strong>Аудиты:</strong></p>
+        <ul class="scheme-panel-list">${auditHtml}</ul>
+        <div class="scheme-actions">
+          <button class="btn" id="createCrFromNode">Создать ЗИ по этому ЭК</button>
+          <button class="ghost-btn" id="openEcCardFromNode">Перейти к ЭК</button>
+        </div>
+      `;
+
+      schemeInfoContent.querySelectorAll('[data-ec-code]').forEach(el => {
+        el.addEventListener('click', () => goToEcCard(el.dataset.ecCode));
+      });
+
+      schemeInfoContent.querySelectorAll('[data-cr-link]').forEach(el => {
+        el.addEventListener('click', (e) => {
+          e.preventDefault();
+          openCrByNumber(el.dataset.crLink);
+        });
+      });
+
+      schemeInfoContent.querySelectorAll('[data-audit-link]').forEach(el => {
+        el.addEventListener('click', (e) => {
+          e.preventDefault();
+          openAudit(el.dataset.auditLink);
+        });
+      });
+
+      const createCrBtn = document.getElementById('createCrFromNode');
+      if (createCrBtn) createCrBtn.addEventListener('click', () => prefillCrFromNode(node));
+      const openEcBtn = document.getElementById('openEcCardFromNode');
+      if (openEcBtn) openEcBtn.addEventListener('click', () => goToEcCard(node.ecCodes[0]));
+    }
+
+    function selectSchemeNode(nodeId) {
+      const node = schemeNodes.find(n => n.id === nodeId);
+      if (!node) return;
+      selectedNodeId = node.id;
+      renderSchemeInfo(node);
+      updateSchemeHighlights(node);
+    }
+
+    function createMarker(node) {
+      const marker = document.createElement('div');
+      marker.className = 'scheme-node-marker';
+      marker.dataset.nodeId = node.id;
+      marker.style.left = `${node.xPercent}%`;
+      marker.style.top = `${node.yPercent}%`;
+      marker.title = `${node.label} (${node.ecCodes.join(', ')})`;
+      marker.addEventListener('mouseenter', () => showSchemeTooltip(marker, node));
+      marker.addEventListener('mouseleave', () => hideSchemeTooltip(marker));
+      marker.addEventListener('click', (e) => {
+        e.stopPropagation();
+        selectSchemeNode(node.id);
+      });
+      return marker;
+    }
+
+    function renderSchemeMarkers() {
+      if (!schemeContainer) return;
+      schemeContainer.querySelectorAll('.scheme-node-marker').forEach(m => m.remove());
+      schemeNodes.forEach(node => {
+        const marker = createMarker(node);
+        schemeContainer.appendChild(marker);
+      });
+      if (selectedNodeId) {
+        selectSchemeNode(selectedNodeId);
+      }
+    }
+
+    function openSchemeModal(coords) {
+      pendingCoords = coords;
+      schemeCoordsInput.value = `${coords.xPercent.toFixed(1)}%, ${coords.yPercent.toFixed(1)}%`;
+      schemeNodeForm.reset();
+      renderSchemeEcLinks();
+      schemeModal.classList.remove('hidden');
+    }
+
+    function closeSchemeModal() {
+      schemeModal.classList.add('hidden');
+    }
+
+    schemeImage?.addEventListener('click', (e) => {
+      if (!schemeEditToggle.checked) return;
+      const rect = schemeImage.getBoundingClientRect();
+      const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
+      const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
+      openSchemeModal({ xPercent, yPercent });
+    });
+
+    schemeCloseBtn?.addEventListener('click', closeSchemeModal);
+
+    schemeSaveBtn?.addEventListener('click', () => {
+      if (!pendingCoords) return;
+      const code = schemeEcCodeInput.value.trim();
+      const category = schemeEcCategoryInput.value;
+      const label = schemeLabelInput.value.trim();
+      const description = schemeDescInput.value.trim();
+      if (!code || !category || !label) {
+        alert('Заполните код ЭК, категорию и название.');
+        return;
+      }
+      let ecCodes = Array.from(schemeEcLinks.querySelectorAll('input:checked')).map(i => i.value);
+      if (!ecCodes.includes(code)) ecCodes.push(code);
+
+      if (!ecData.some(ec => ec.code === code)) {
+        ecData.push({ code, category, name: label, desc: description, version: 'v0.1', status: 'разрабатывается' });
+        renderEcTable(searchEcInput.value.trim().toLowerCase());
+        populateEcCardSelect();
+        renderCrEcCheckboxes();
+      }
+
+      const newNode = {
+        id: code,
+        label,
+        ecCodes,
+        type: category,
+        xPercent: pendingCoords.xPercent,
+        yPercent: pendingCoords.yPercent,
+        description: description || 'Новый узел схемы',
+        history: [`${new Date().toISOString().slice(0, 10)}: добавлен на схему`],
+        audits: []
+      };
+      schemeNodes.push(newNode);
+      renderSchemeMarkers();
+      closeSchemeModal();
+      selectSchemeNode(newNode.id);
+    });
 
     // === Логика добавления ЭК (эмуляция записи в CMDB) ===
     const addEcForm = document.getElementById('addEcForm');
@@ -491,20 +894,20 @@
     // === Верхний уровень: переключение разделов SPA ===
     document.querySelectorAll('#mainTabs .tab-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        document.querySelectorAll('#mainTabs .tab-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        document.querySelectorAll('section').forEach(sec => sec.classList.add('hidden'));
-        document.getElementById(btn.dataset.target).classList.remove('hidden');
+        switchMainTab(btn.dataset.target);
       });
     });
 
     // === Внутренние табы CMDB ===
+    function switchCmdbTab(targetId) {
+      document.querySelectorAll('#cmdbTabs .tab-btn').forEach(b => b.classList.toggle('active', b.dataset.target === targetId));
+      document.querySelectorAll('.cmdb-block').forEach(block => block.classList.add('hidden'));
+      document.getElementById(targetId)?.classList.remove('hidden');
+    }
+
     document.querySelectorAll('#cmdbTabs .tab-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        document.querySelectorAll('#cmdbTabs .tab-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        document.querySelectorAll('.cmdb-block').forEach(block => block.classList.add('hidden'));
-        document.getElementById(btn.dataset.target).classList.remove('hidden');
+        switchCmdbTab(btn.dataset.target);
       });
     });
 
@@ -524,6 +927,10 @@
       const ec = ecData.find(item => item.code === code);
       if (!ec) return;
       const card = ecCards[code] || {};
+      const linkedNodes = schemeNodes.filter(node => node.ecCodes.includes(code));
+      const linkedNodesHtml = linkedNodes.length
+        ? linkedNodes.map(node => `<span class="badge" data-scheme-node="${node.id}">${node.label}</span>`).join(' ')
+        : '—';
       cardDetails.innerHTML = `
         <h3>${ec.code} – ${ec.name}</h3>
         <p><strong>Категория:</strong> ${ec.category}</p>
@@ -532,10 +939,27 @@
         <p><strong>Связанные требования:</strong> ${card.req || '—'}</p>
         <p><strong>Связанные тесты / ПМИ:</strong> ${card.tests || '—'}</p>
         <p><strong>Ссылки:</strong> Jira: <input type="checkbox" disabled ${card.jira ? 'checked' : ''}/> Git: <input type="checkbox" disabled ${card.git ? 'checked' : ''}/></p>
+        <p><strong>Привязанные узлы схемы:</strong> ${linkedNodesHtml}</p>
       `;
+
+      cardDetails.querySelectorAll('[data-scheme-node]').forEach(el => {
+        el.addEventListener('click', () => {
+          switchMainTab('tab-scheme');
+          selectSchemeNode(el.dataset.schemeNode);
+        });
+      });
     }
 
     cardSelect.addEventListener('change', (e) => renderCard(e.target.value));
+
+    function goToEcCard(code) {
+      switchMainTab('tab-cmdb');
+      switchCmdbTab('cmdb-card');
+      if (cardSelect.querySelector(`option[value="${code}"]`)) {
+        cardSelect.value = code;
+        renderCard(code);
+      }
+    }
 
     // === Baseline ===
     const baselineSelect = document.getElementById('baselineSelect');
@@ -563,6 +987,21 @@
     const crTableBody = document.querySelector('#crTable tbody');
     const crDetailsContent = document.getElementById('crDetailsContent');
     const crEcList = document.getElementById('crEcList');
+
+    function prefillCrFromNode(node) {
+      switchMainTab('tab-cr');
+      crDesc.value = `Изменение элемента ${node.label} (ЭК: ${node.ecCodes.join(', ')})`;
+      Array.from(crEcList.querySelectorAll('input')).forEach(cb => {
+        cb.checked = node.ecCodes.includes(cb.value);
+      });
+    }
+
+    function openCrByNumber(number) {
+      switchMainTab('tab-cr');
+      renderCrDetails(number);
+      const row = crTableBody.querySelector(`tr[data-cr="${number}"]`);
+      if (row) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
 
     function renderCrEcCheckboxes() {
       crEcList.innerHTML = ecData.map(ec => `<label class="inline"><input type="checkbox" value="${ec.code}" /> ${ec.code}</label>`).join('');
@@ -646,6 +1085,13 @@
     const auditTableBody = document.querySelector('#auditTable tbody');
     const auditDetails = document.getElementById('auditDetails');
 
+    function openAudit(id) {
+      switchMainTab('tab-audit');
+      renderAuditReport(id);
+      const row = auditTableBody.querySelector(`tr[data-audit="${id}"]`);
+      if (row) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
     function renderAudits() {
       auditTableBody.innerHTML = audits.map(audit => `
         <tr data-audit="${audit.id}">
@@ -686,6 +1132,8 @@
       renderAudits();
       renderAuditReport(audits[0].id);
       renderCrDetails(changeRequests[0].number);
+      renderSchemeMarkers();
+      if (schemeNodes.length) selectSchemeNode(schemeNodes[0].id);
     }
 
     document.addEventListener('DOMContentLoaded', init);
