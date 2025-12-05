@@ -87,8 +87,8 @@
     ];
 
     // === Интерактивная модель схемы ===
-    // schemeNodes хранит координаты и связи узлов на схеме, привязанные к реальным ЭК и аудитам
-    let schemeNodes = [
+    // schemeNodesHW – узлы электрической схемы; маркеры позиционируются по процентам
+    const schemeNodesHW = [
       {
         id: 'ESP32',
         label: 'ESP32 DevKit',
@@ -182,6 +182,185 @@
       }
     ];
 
+    // schemeNodesSW – узлы программной схемы (блок-диаграмма)
+    const schemeNodesSW = [
+      {
+        id: 'SW_MAIN',
+        label: 'main() / инициализация',
+        ecCodes: ['LSAR-SW-01'],
+        type: 'SW',
+        description: 'Старт ESP32, настройка периферии, запуск задач FreeRTOS.',
+        history: ['v1.0: базовая инициализация', 'v1.1: добавлены проверки питания'],
+        audits: ['INT-2025-1']
+      },
+      {
+        id: 'SW_TASKS',
+        label: 'Задачи FreeRTOS',
+        ecCodes: ['LSAR-SW-01', 'LSAR-SW-02'],
+        type: 'SW',
+        description: 'Набор задач RTOS, реализующих управление насосом, вентиляторами, температурой и логированием.',
+        history: ['2025-09-01: базовая структура задач', '2025-12-01: добавлены проверки таймаутов'],
+        audits: ['INT-2025-1']
+      },
+      {
+        id: 'SW_PUMP',
+        label: 'Task_PumpCtrl',
+        ecCodes: ['LSAR-HW-01', 'LSAR-SW-01'],
+        type: 'SW',
+        description: 'Управляет насосом через MOSFET, реагируя на давление и расход.',
+        history: ['v1.0: базовый контроль включения', 'v1.1: добавлены аварийные пороги'],
+        audits: []
+      },
+      {
+        id: 'SW_FANS',
+        label: 'Task_FansCtrl',
+        ecCodes: ['LSAR-HW-04', 'LSAR-SW-01'],
+        type: 'SW',
+        description: 'Регулирует обороты вентиляторов радиатора и следит за перегревом.',
+        history: ['v1.0: ШИМ-регулирование', 'v1.1: плавный разгон/торможение'],
+        audits: []
+      },
+      {
+        id: 'SW_TEMP',
+        label: 'Task_TempControl',
+        ecCodes: ['LSAR-SW-03', 'LSAR-HW-05', 'LSAR-HW-03', 'LSAR-HW-04'],
+        type: 'SW',
+        description: 'Оркестрирует PID и исполнительные механизмы нагрева/охлаждения.',
+        history: ['v1.0: базовый цикл', 'v1.1: адаптивные пределы температуры'],
+        audits: ['INT-2025-1']
+      },
+      {
+        id: 'SW_LOG',
+        label: 'Task_Logging',
+        ecCodes: ['LSAR-SW-01'],
+        type: 'SW',
+        description: 'Собирает телеметрию, пишет в UART/файл и помечает события для аудитов.',
+        history: ['v1.0: лог в UART', 'v1.1: буферизация с отметкой времени'],
+        audits: []
+      },
+      {
+        id: 'SW_PID',
+        label: 'PID-регулятор температуры',
+        ecCodes: ['LSAR-SW-03'],
+        type: 'SW',
+        description: 'Алгоритм PID, поддерживающий температуру с точностью ±1°C.',
+        history: ['v1.0: базовый алгоритм', 'v1.1: улучшена устойчивость'],
+        audits: ['INT-2025-1']
+      },
+      {
+        id: 'SW_DRIVERS',
+        label: 'Драйверы датчиков',
+        ecCodes: ['LSAR-HW-05', 'LSAR-HW-06', 'LSAR-HW-07', 'LSAR-SW-01'],
+        type: 'SW',
+        description: 'Драйверы DS18B20, EN837-1, расходомера; калибровка измерений.',
+        history: ['v1.0: базовые драйверы', 'v1.1: проверка таймаутов датчиков'],
+        audits: []
+      },
+      {
+        id: 'SW_CONFIG',
+        label: 'Конфигурация и калибровки',
+        ecCodes: ['LSAR-SW-01', 'LSAR-SW-03'],
+        type: 'SW',
+        description: 'Хранение коэффициентов PID, порогов и настроек порта диагностики.',
+        history: ['v1.0: EEPROM параметры', 'v1.1: резервное копирование конфигурации'],
+        audits: []
+      },
+      {
+        id: 'SW_DIAG',
+        label: 'Интерфейс диагностики',
+        ecCodes: ['LSAR-SW-01'],
+        type: 'SW',
+        description: 'Вывод логов, сервисные команды, контроль состояния датчиков.',
+        history: ['v1.0: базовый CLI', 'v1.1: добавлены команды самодиагностики'],
+        audits: []
+      }
+    ];
+
+    // schemeNodesDOC – узлы схемы документации и связей
+    const schemeNodesDOC = [
+      {
+        id: 'DOC_REQ',
+        label: 'Требования (LSAR-REQ)',
+        ecCodes: ['LSAR-SW-03', 'LSAR-HW-05', 'LSAR-HW-04', 'LSAR-HW-03'],
+        type: 'DOC',
+        description: 'Базовые требования к точности температуры и безопасности.',
+        history: ['Ред.1: утверждены требования к PID'],
+        audits: []
+      },
+      {
+        id: 'DOC_FTT',
+        label: 'ФТТ (LSAR-DOC-01)',
+        ecCodes: ['LSAR-SW-01', 'LSAR-HW-03'],
+        type: 'DOC',
+        description: 'Функционально-технические требования на стенд.',
+        history: ['Ред.1: первичное описание функций стенда'],
+        audits: []
+      },
+      {
+        id: 'DOC_PMI',
+        label: 'ПМИ (LSAR-DOC-02)',
+        ecCodes: ['LSAR-SW-03', 'LSAR-HW-05', 'LSAR-HW-04', 'LSAR-HW-03'],
+        type: 'DOC',
+        description: 'Программа и методика испытаний, содержит тесты по проверке точности температуры.',
+        history: [],
+        audits: []
+      },
+      {
+        id: 'DOC_PASSPORT',
+        label: 'Паспорт изделия (LSAR-DOC-03)',
+        ecCodes: ['LSAR-HW-01', 'LSAR-HW-03', 'LSAR-HW-04', 'LSAR-HW-05', 'LSAR-HW-06', 'LSAR-HW-07', 'LSAR-SW-01', 'LSAR-SW-03'],
+        type: 'DOC',
+        description: 'Основной документ по изделию ЛСАР, содержит состав и конфигурацию стенда.',
+        history: ['Ред.1: Baseline 1.0', 'Ред.2: обновление под Baseline 1.1'],
+        audits: ['INT-2025-1']
+      },
+      {
+        id: 'DOC_ELEC',
+        label: 'Электрическая схема (LSAR-DOC-04)',
+        ecCodes: ['LSAR-HW-01', 'LSAR-HW-03', 'LSAR-HW-04', 'LSAR-HW-05', 'LSAR-HW-06', 'LSAR-HW-09'],
+        type: 'DOC',
+        description: 'Принципиальная схема стенда с узлами силовой и сигнальной частей.',
+        history: ['Ред.1: первичная схема'],
+        audits: []
+      },
+      {
+        id: 'DOC_HYDRO',
+        label: 'Гидравлическая схема (LSAR-DOC-05)',
+        ecCodes: ['LSAR-HW-01', 'LSAR-HW-03', 'LSAR-HW-07'],
+        type: 'DOC',
+        description: 'Схема гидравлической части с указанием потоков и датчиков.',
+        history: ['Ред.1: базовый контур'],
+        audits: []
+      },
+      {
+        id: 'DOC_JOURNAL',
+        label: 'Журнал изменений (LSAR-DOC-07)',
+        ecCodes: ['LSAR-SW-01', 'LSAR-SW-03', 'LSAR-DOC-03'],
+        type: 'DOC',
+        description: 'История изменений, фиксирует привязку ЗИ к ЭК.',
+        history: ['Ред.1: создан под Baseline 1.0'],
+        audits: ['INT-2025-1']
+      },
+      {
+        id: 'DOC_BASE10',
+        label: 'Baseline 1.0',
+        ecCodes: ['LSAR-SW-01', 'LSAR-SW-03', 'LSAR-DOC-03', 'LSAR-DOC-04', 'LSAR-DOC-05'],
+        type: 'DOC',
+        description: 'Первая эксплуатационная конфигурация стенда.',
+        history: ['01.09.2025: утверждение baseline'],
+        audits: []
+      },
+      {
+        id: 'DOC_BASE11',
+        label: 'Baseline 1.1',
+        ecCodes: ['LSAR-SW-01', 'LSAR-SW-03', 'LSAR-DOC-03', 'LSAR-DOC-04', 'LSAR-DOC-05'],
+        type: 'DOC',
+        description: 'Обновление PID и паспорта изделия.',
+        history: ['01.12.2025: обновление под итог аудита INT-2025-1'],
+        audits: ['INT-2025-1']
+      }
+    ];
+
     // === Вспомогательные функции отрисовки таблиц ===
     const ecTableBody = document.querySelector('#ecTable tbody');
     const cmdbEcTableBody = document.querySelector('#cmdbEcTable tbody');
@@ -202,7 +381,8 @@
       cmdbEcTableBody.innerHTML = rows || '<tr><td colspan="6">Ничего не найдено</td></tr>';
     }
 
-    // === Интерактивная схема: работа с DOM, маркерами и панелью ===
+
+    // === Интерактивные схемы: работа с DOM, маркерами и панелью ===
     const schemeContainer = document.getElementById('scheme-container');
     const schemeImage = document.getElementById('lsar-scheme');
     const schemeInfoTitle = document.getElementById('schemeInfoTitle');
@@ -219,8 +399,22 @@
     const schemeCoordsInput = document.getElementById('schemeCoords');
     const schemeSaveBtn = document.getElementById('saveSchemeNode');
     const schemeCloseBtn = document.getElementById('closeSchemeModal');
+    const schemeSubmenu = document.getElementById('schemeSubmenu');
+    const schemeSwDiagram = document.getElementById('scheme-sw-diagram');
+    const schemeDocDiagram = document.getElementById('scheme-doc-diagram');
     let pendingCoords = null;
     let selectedNodeId = null;
+    let activeSchemeMode = 'HW';
+
+    function getSchemeNodesByMode(mode) {
+      if (mode === 'SW') return schemeNodesSW;
+      if (mode === 'DOC') return schemeNodesDOC;
+      return schemeNodesHW;
+    }
+
+    function getAllSchemeNodes() {
+      return [...schemeNodesHW, ...schemeNodesSW, ...schemeNodesDOC];
+    }
 
     function renderSchemeEcLinks() {
       schemeEcLinks.innerHTML = ecData
@@ -241,18 +435,21 @@
       marker.appendChild(tooltip);
     }
 
-    function updateSchemeHighlights(node) {
+    function updateSchemeHighlights(node, mode) {
       const relatedCodes = new Set(node.ecCodes);
-      schemeContainer.querySelectorAll('.scheme-node-marker').forEach(marker => {
+      const container = mode === 'HW' ? schemeContainer : mode === 'SW' ? schemeSwDiagram : schemeDocDiagram;
+      if (!container) return;
+      const selector = mode === 'HW' ? '.scheme-node-marker' : '.diagram-node';
+      container.querySelectorAll(selector).forEach(marker => {
         const markerId = marker.dataset.nodeId;
-        const markerNode = schemeNodes.find(n => n.id === markerId);
+        const markerNode = getSchemeNodesByMode(mode).find(n => n.id === markerId);
         marker.classList.toggle('selected', markerId === node.id);
         const hasIntersection = markerNode && markerNode.ecCodes.some(code => relatedCodes.has(code));
         marker.classList.toggle('related-node', markerId !== node.id && hasIntersection);
       });
     }
 
-    function renderSchemeInfo(node) {
+    function showSchemeNodeDetails(node, mode = activeSchemeMode) {
       schemeInfoTitle.textContent = `${node.label} (${node.ecCodes.join(', ')})`;
       schemeInfoDesc.textContent = node.description;
 
@@ -264,7 +461,7 @@
         })
         .join(' ');
 
-      const historyHtml = node.history.length
+      const historyHtml = node.history?.length
         ? node.history.map(item => `<li>${item}</li>`).join('')
         : '<li>История пока пуста</li>';
 
@@ -315,14 +512,23 @@
       if (createCrBtn) createCrBtn.addEventListener('click', () => prefillCrFromNode(node));
       const openEcBtn = document.getElementById('openEcCardFromNode');
       if (openEcBtn) openEcBtn.addEventListener('click', () => goToEcCard(node.ecCodes[0]));
+
+      updateSchemeHighlights(node, mode);
     }
 
-    function selectSchemeNode(nodeId) {
-      const node = schemeNodes.find(n => n.id === nodeId);
-      if (!node) return;
+    function selectSchemeNode(nodeId, mode = activeSchemeMode) {
+      const nodes = getSchemeNodesByMode(mode);
+      const node = nodes.find(n => n.id === nodeId);
+      if (!node) {
+        const fallbackMode = ['HW', 'SW', 'DOC'].find(m => getSchemeNodesByMode(m).some(n => n.id === nodeId));
+        if (fallbackMode && fallbackMode !== mode) {
+          switchSchemeView(fallbackMode);
+          selectSchemeNode(nodeId, fallbackMode);
+        }
+        return;
+      }
       selectedNodeId = node.id;
-      renderSchemeInfo(node);
-      updateSchemeHighlights(node);
+      showSchemeNodeDetails(node, mode);
     }
 
     function createMarker(node) {
@@ -336,20 +542,41 @@
       marker.addEventListener('mouseleave', () => hideSchemeTooltip(marker));
       marker.addEventListener('click', (e) => {
         e.stopPropagation();
-        selectSchemeNode(node.id);
+        selectSchemeNode(node.id, 'HW');
       });
       return marker;
     }
 
-    function renderSchemeMarkers() {
-      if (!schemeContainer) return;
-      schemeContainer.querySelectorAll('.scheme-node-marker').forEach(m => m.remove());
-      schemeNodes.forEach(node => {
-        const marker = createMarker(node);
-        schemeContainer.appendChild(marker);
+    function attachDiagramHandlers(container, nodes, mode) {
+      if (!container) return;
+      container.querySelectorAll('.diagram-node').forEach(block => {
+        const nodeId = block.dataset.nodeId;
+        const node = nodes.find(n => n.id === nodeId);
+        if (!node) return;
+        block.addEventListener('mouseenter', () => showSchemeTooltip(block, node));
+        block.addEventListener('mouseleave', () => hideSchemeTooltip(block));
+        block.addEventListener('click', () => selectSchemeNode(nodeId, mode));
       });
+    }
+
+    function renderSchemeMarkers(containerElement, imageElement, nodesArray, mode) {
+      if (!containerElement) return;
+
+      if (mode === 'HW') {
+        containerElement.querySelectorAll('.scheme-node-marker').forEach(m => m.remove());
+        nodesArray.forEach(node => {
+          const marker = createMarker(node);
+          containerElement.appendChild(marker);
+        });
+      } else {
+        containerElement.querySelectorAll('.diagram-node').forEach(block => {
+          block.classList.remove('selected', 'related-node');
+        });
+        attachDiagramHandlers(containerElement, nodesArray, mode);
+      }
+
       if (selectedNodeId) {
-        selectSchemeNode(selectedNodeId);
+        selectSchemeNode(selectedNodeId, mode);
       }
     }
 
@@ -362,37 +589,33 @@
     }
 
     function closeSchemeModal() {
+      pendingCoords = null;
       schemeModal.classList.add('hidden');
     }
 
-    schemeImage?.addEventListener('click', (e) => {
-      if (!schemeEditToggle.checked) return;
-      const rect = schemeImage.getBoundingClientRect();
-      const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
-      const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
-      openSchemeModal({ xPercent, yPercent });
-    });
+    if (schemeContainer) {
+      schemeContainer.addEventListener('click', (e) => {
+        if (!schemeEditToggle.checked || activeSchemeMode !== 'HW') return;
+        const rect = schemeImage.getBoundingClientRect();
+        const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
+        const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
+        openSchemeModal({ xPercent, yPercent });
+      });
+    }
 
-    schemeCloseBtn?.addEventListener('click', closeSchemeModal);
+    schemeCloseBtn.addEventListener('click', closeSchemeModal);
 
-    schemeSaveBtn?.addEventListener('click', () => {
+    schemeSaveBtn.addEventListener('click', () => {
       if (!pendingCoords) return;
       const code = schemeEcCodeInput.value.trim();
       const category = schemeEcCategoryInput.value;
       const label = schemeLabelInput.value.trim();
       const description = schemeDescInput.value.trim();
-      if (!code || !category || !label) {
-        alert('Заполните код ЭК, категорию и название.');
-        return;
-      }
-      let ecCodes = Array.from(schemeEcLinks.querySelectorAll('input:checked')).map(i => i.value);
-      if (!ecCodes.includes(code)) ecCodes.push(code);
+      const ecCodes = Array.from(schemeEcLinks.querySelectorAll('input:checked')).map(cb => cb.value);
 
-      if (!ecData.some(ec => ec.code === code)) {
-        ecData.push({ code, category, name: label, desc: description, version: 'v0.1', status: 'разрабатывается' });
-        renderEcTable(searchEcInput.value.trim().toLowerCase());
-        populateEcCardSelect();
-        renderCrEcCheckboxes();
+      if (!code || !label || !category) {
+        alert('Заполните обязательные поля.');
+        return;
       }
 
       const newNode = {
@@ -406,11 +629,37 @@
         history: [`${new Date().toISOString().slice(0, 10)}: добавлен на схему`],
         audits: []
       };
-      schemeNodes.push(newNode);
-      renderSchemeMarkers();
+      schemeNodesHW.push(newNode);
+      renderSchemeMarkers(schemeContainer, schemeImage, schemeNodesHW, 'HW');
       closeSchemeModal();
-      selectSchemeNode(newNode.id);
+      selectSchemeNode(newNode.id, 'HW');
     });
+
+    function switchSchemeView(mode) {
+      activeSchemeMode = mode;
+      selectedNodeId = null;
+      document.querySelectorAll('.scheme-view').forEach(view => view.classList.add('hidden'));
+      document.querySelectorAll('#schemeSubmenu .tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.schemeTarget === mode));
+      const targetView = document.getElementById(`scheme-${mode.toLowerCase()}`);
+      if (targetView) targetView.classList.remove('hidden');
+
+      if (mode === 'HW') {
+        renderSchemeMarkers(schemeContainer, schemeImage, schemeNodesHW, 'HW');
+        if (schemeNodesHW.length) selectSchemeNode(schemeNodesHW[0].id, 'HW');
+      } else if (mode === 'SW') {
+        renderSchemeMarkers(schemeSwDiagram, null, schemeNodesSW, 'SW');
+        if (schemeNodesSW.length) selectSchemeNode(schemeNodesSW[0].id, 'SW');
+      } else {
+        renderSchemeMarkers(schemeDocDiagram, null, schemeNodesDOC, 'DOC');
+        if (schemeNodesDOC.length) selectSchemeNode(schemeNodesDOC[0].id, 'DOC');
+      }
+    }
+
+    if (schemeSubmenu) {
+      schemeSubmenu.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchSchemeView(btn.dataset.schemeTarget));
+      });
+    }
 
     // === Логика добавления ЭК (эмуляция записи в CMDB) ===
     const addEcForm = document.getElementById('addEcForm');
@@ -478,7 +727,7 @@
       const ec = ecData.find(item => item.code === code);
       if (!ec) return;
       const card = ecCards[code] || {};
-      const linkedNodes = schemeNodes.filter(node => node.ecCodes.includes(code));
+      const linkedNodes = getAllSchemeNodes().filter(node => node.ecCodes.includes(code));
       const linkedNodesHtml = linkedNodes.length
         ? linkedNodes.map(node => `<span class="badge" data-scheme-node="${node.id}">${node.label}</span>`).join(' ')
         : '—';
@@ -495,8 +744,10 @@
 
       cardDetails.querySelectorAll('[data-scheme-node]').forEach(el => {
         el.addEventListener('click', () => {
-          switchMainTab('tab-scheme');
-          selectSchemeNode(el.dataset.schemeNode);
+          switchMainTab('tab-interactive-schemes');
+          const targetMode = ['HW', 'SW', 'DOC'].find(m => getSchemeNodesByMode(m).some(n => n.id === el.dataset.schemeNode));
+          if (targetMode) switchSchemeView(targetMode);
+          selectSchemeNode(el.dataset.schemeNode, targetMode || activeSchemeMode);
         });
       });
     }
@@ -683,8 +934,7 @@
       renderAudits();
       renderAuditReport(audits[0].id);
       renderCrDetails(changeRequests[0].number);
-      renderSchemeMarkers();
-      if (schemeNodes.length) selectSchemeNode(schemeNodes[0].id);
+      switchSchemeView('HW');
     }
 
     document.addEventListener('DOMContentLoaded', init);
