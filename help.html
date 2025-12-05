@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Справка по управлению конфигурацией ЛСАР</title>
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body class="help-body">
+  <header>
+    <div class="header-row">
+      <h1>Справка и учебный курс по УК для стенда ЛСАР</h1>
+      <nav class="main-nav">
+        <button class="nav-link" onclick="window.location.href='index.html'">Основное приложение</button>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container help-layout">
+    <aside class="legend-panel" aria-label="Легенда сокращений">
+      <h3>Легенда</h3>
+      <ul id="legendList"></ul>
+      <div class="legend-note">Подсказки по терминам также доступны при наведении.</div>
+    </aside>
+
+    <main class="help-main">
+      <section class="card hero-card">
+        <p class="eyebrow">Интерактивный курс / справочник</p>
+        <h2>Управление конфигурацией учебного теплогидравлического стенда ЛСАР</h2>
+        <p>Страница собрана как презентация с таймлайном, разворачивающимися блоками и ссылками на ключевые разделы Плана УК. Можно использовать на защите, аудите или в обучении новых инженеров.</p>
+        <div class="toc" id="toc"></div>
+        <div class="timeline" id="timeline"></div>
+      </section>
+
+      <div id="helpSections"></div>
+    </main>
+  </div>
+
+  <script src="assets/js/help.js"></script>
+</body>
+</html>
