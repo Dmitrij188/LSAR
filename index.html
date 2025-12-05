@@ -297,11 +297,7 @@
         <button class="tab-btn" data-scheme-target="SW">SW-схема</button>
         <button class="tab-btn" data-scheme-target="DOC">DOC-схема</button>
       </div>
-      <div class="pill-toggle" style="margin-bottom:10px;">
-        <input type="checkbox" id="schemeEditToggle" />
-        <label for="schemeEditToggle" style="margin:0; font-weight:600;">Режим добавления новых ЭК</label>
-      </div>
-      <p class="scheme-note">В режиме добавления клик по схеме открывает форму для создания нового узла и привязки его к существующим ЭК.</p>
+      <p class="scheme-note">Схемы доступны только для просмотра: выберите узел, чтобы увидеть связанные ЭК, ЗИ и аудиты.</p>
       <div class="scheme-layout">
         <div class="scheme-area">
           <div id="scheme-hw" class="scheme-view">
@@ -345,48 +341,6 @@
         </aside>
       </div>
     </section>
-  </div>
-
-  <!-- Модальное окно добавления узла на схеме -->
-  <div id="schemeModal" class="modal-backdrop hidden">
-    <div class="modal">
-      <h3>Новый элемент схемы</h3>
-      <form id="schemeNodeForm" class="flex">
-        <div class="grow">
-          <label for="schemeEcCode">Код ЭК *</label>
-          <input type="text" id="schemeEcCode" required />
-        </div>
-        <div class="grow">
-          <label for="schemeEcCategory">Категория *</label>
-          <select id="schemeEcCategory" required>
-            <option value="">Выберите</option>
-            <option value="HW">HW</option>
-            <option value="SW">SW</option>
-            <option value="DOC">DOC</option>
-          </select>
-        </div>
-        <div class="grow">
-          <label for="schemeLabel">Название / Label *</label>
-          <input type="text" id="schemeLabel" required />
-        </div>
-        <div class="grow" style="flex-basis:100%;">
-          <label for="schemeDesc">Краткое описание</label>
-          <textarea id="schemeDesc" rows="3"></textarea>
-        </div>
-        <div class="grow" style="flex-basis:100%;">
-          <label>Связать с существующими ЭК</label>
-          <div id="schemeEcLinks" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
-        </div>
-        <div class="grow">
-          <label>Координаты</label>
-          <input type="text" id="schemeCoords" disabled />
-        </div>
-      </form>
-      <div class="modal-actions">
-        <button type="button" class="ghost-btn" id="closeSchemeModal">Отмена</button>
-        <button type="button" class="btn" id="saveSchemeNode">Сохранить</button>
-      </div>
-    </div>
   </div>
 
   <script src="assets/js/app.js"></script>
