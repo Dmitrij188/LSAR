@@ -388,21 +388,9 @@
     const schemeInfoTitle = document.getElementById('schemeInfoTitle');
     const schemeInfoDesc = document.getElementById('schemeInfoDesc');
     const schemeInfoContent = document.getElementById('schemeInfoContent');
-    const schemeEditToggle = document.getElementById('schemeEditToggle');
-    const schemeModal = document.getElementById('schemeModal');
-    const schemeNodeForm = document.getElementById('schemeNodeForm');
-    const schemeEcLinks = document.getElementById('schemeEcLinks');
-    const schemeEcCodeInput = document.getElementById('schemeEcCode');
-    const schemeEcCategoryInput = document.getElementById('schemeEcCategory');
-    const schemeLabelInput = document.getElementById('schemeLabel');
-    const schemeDescInput = document.getElementById('schemeDesc');
-    const schemeCoordsInput = document.getElementById('schemeCoords');
-    const schemeSaveBtn = document.getElementById('saveSchemeNode');
-    const schemeCloseBtn = document.getElementById('closeSchemeModal');
     const schemeSubmenu = document.getElementById('schemeSubmenu');
     const schemeSwDiagram = document.getElementById('scheme-sw-diagram');
     const schemeDocDiagram = document.getElementById('scheme-doc-diagram');
-    let pendingCoords = null;
     let selectedNodeId = null;
     let activeSchemeMode = 'HW';
 
@@ -414,12 +402,6 @@
 
     function getAllSchemeNodes() {
       return [...schemeNodesHW, ...schemeNodesSW, ...schemeNodesDOC];
-    }
-
-    function renderSchemeEcLinks() {
-      schemeEcLinks.innerHTML = ecData
-        .map(ec => `<label class="inline"><input type="checkbox" value="${ec.code}" /> ${ec.code}</label>`)
-        .join('');
     }
 
     function hideSchemeTooltip(marker) {
@@ -579,61 +561,6 @@
         selectSchemeNode(selectedNodeId, mode);
       }
     }
-
-    function openSchemeModal(coords) {
-      pendingCoords = coords;
-      schemeCoordsInput.value = `${coords.xPercent.toFixed(1)}%, ${coords.yPercent.toFixed(1)}%`;
-      schemeNodeForm.reset();
-      renderSchemeEcLinks();
-      schemeModal.classList.remove('hidden');
-    }
-
-    function closeSchemeModal() {
-      pendingCoords = null;
-      schemeModal.classList.add('hidden');
-    }
-
-    if (schemeContainer) {
-      schemeContainer.addEventListener('click', (e) => {
-        if (!schemeEditToggle.checked || activeSchemeMode !== 'HW') return;
-        const rect = schemeImage.getBoundingClientRect();
-        const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
-        const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
-        openSchemeModal({ xPercent, yPercent });
-      });
-    }
-
-    schemeCloseBtn.addEventListener('click', closeSchemeModal);
-
-    schemeSaveBtn.addEventListener('click', () => {
-      if (!pendingCoords) return;
-      const code = schemeEcCodeInput.value.trim();
-      const category = schemeEcCategoryInput.value;
-      const label = schemeLabelInput.value.trim();
-      const description = schemeDescInput.value.trim();
-      const ecCodes = Array.from(schemeEcLinks.querySelectorAll('input:checked')).map(cb => cb.value);
-
-      if (!code || !label || !category) {
-        alert('Заполните обязательные поля.');
-        return;
-      }
-
-      const newNode = {
-        id: code,
-        label,
-        ecCodes,
-        type: category,
-        xPercent: pendingCoords.xPercent,
-        yPercent: pendingCoords.yPercent,
-        description: description || 'Новый узел схемы',
-        history: [`${new Date().toISOString().slice(0, 10)}: добавлен на схему`],
-        audits: []
-      };
-      schemeNodesHW.push(newNode);
-      renderSchemeMarkers(schemeContainer, schemeImage, schemeNodesHW, 'HW');
-      closeSchemeModal();
-      selectSchemeNode(newNode.id, 'HW');
-    });
 
     function switchSchemeView(mode) {
       activeSchemeMode = mode;
