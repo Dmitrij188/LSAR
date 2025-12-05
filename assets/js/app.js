@@ -862,6 +862,11 @@
       renderAuditReport(audits[0].id);
       renderCrDetails(changeRequests[0].number);
       switchSchemeView('HW');
+
+      const helpLink = document.getElementById('openHelp');
+      if (helpLink) {
+        helpLink.addEventListener('click', () => window.open('help.html', '_blank'));
+      }
     }
 
     document.addEventListener('DOMContentLoaded', init);
