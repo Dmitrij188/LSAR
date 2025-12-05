@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>План управления конфигурацией ЛСАР – интерактивное приложение</title>
+  <style>
+    :root {
+      --bg: #f5f7fa;
+      --card: #ffffff;
+      --accent: #0f6ab4;
+      --border: #d6dde6;
+      --text: #1f2a44;
+      --muted: #62708a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    header {
+      background: linear-gradient(90deg, #0f6ab4, #1e88e5);
+      color: #fff;
+      padding: 16px 24px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+    header h1 { margin: 0; font-size: 22px; }
+    .container { padding: 20px 24px 60px; max-width: 1280px; margin: 0 auto; }
+    .images-block { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin: 16px 0 24px; }
+    figure { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.06); }
+    figure img { width: 100%; border-radius: 6px; }
+    figure figcaption { margin-top: 8px; font-size: 13px; font-style: italic; color: var(--muted); }
+    .tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    .tab-btn {
+      padding: 10px 14px;
+      background: #e6effa;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    .tab-btn.active { background: var(--accent); color: #fff; border-color: #0f6ab4; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); margin-bottom: 16px; }
+    h2 { margin-top: 0; color: var(--text); }
+    p.note { margin-top: -6px; color: var(--muted); font-style: italic; font-size: 13px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    th, td { border: 1px solid var(--border); padding: 8px 10px; text-align: left; font-size: 14px; }
+    th { background: #eef3fb; color: var(--text); }
+    tr:nth-child(even) { background: #fafbfe; }
+    label { display: block; margin-top: 10px; font-weight: 600; font-size: 14px; }
+    input[type="text"], input[type="date"], select, textarea {
+      width: 100%; padding: 8px; margin-top: 4px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; background: #fff;
+    }
+    textarea { resize: vertical; min-height: 70px; }
+    .btn {
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: var(--accent);
+      border: none;
+      color: #fff;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .btn:hover { background: #0d5ea3; }
+    .hidden { display: none; }
+    .flex { display: flex; gap: 16px; flex-wrap: wrap; }
+    .grow { flex: 1 1 320px; }
+    .status-select { width: 100%; }
+    .tag { display: inline-block; padding: 3px 8px; border-radius: 12px; background: #eef3fb; color: var(--text); font-size: 12px; margin-right: 6px; margin-bottom: 4px; }
+    .inline { display: inline-block; margin-right: 12px; }
+    @media (max-width: 768px) {
+      .tabs { flex-direction: column; }
+      th, td { font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>План управления конфигурацией ЛСАР – интерактивное приложение</h1>
+  </header>
+  <div class="container">
+    <div class="images-block">
+      <figure>
+        <img src="lsar-stand.png" alt="Общий вид стенда ЛСАР" />
+        <figcaption>Рис. 1 – Общий вид учебного стенда ЛСАР</figcaption>
+      </figure>
+      <figure>
+        <img src="lsar-stand-labeled.png" alt="Аннотированный вид стенда ЛСАР" />
+        <figcaption>Рис. 2 – Основные узлы стенда ЛСАР</figcaption>
+      </figure>
+    </div>
+
+    <div class="tabs" id="mainTabs">
+      <button class="tab-btn active" data-target="tab-ec">Элементы конфигурации (ЭК)</button>
+      <button class="tab-btn" data-target="tab-cmdb">CMDB / Данные о конфигурации</button>
+      <button class="tab-btn" data-target="tab-cr">Изменения (ЗИ / CR)</button>
+      <button class="tab-btn" data-target="tab-audit">Аудиты</button>
+      <button class="tab-btn" data-target="tab-baseline">Baseline и трассировка</button>
+    </div>
+
+    <!-- Раздел ЭК -->
+    <section id="tab-ec" class="card">
+      <h2>Элементы конфигурации (ЭК)</h2>
+      <p class="note">Реестр ЭК стенда ЛСАР хранится локально (эмуляция CMDB).</p>
+
+      <div class="flex">
+        <div class="grow">
+          <label for="searchEc">Поиск по коду или наименованию</label>
+          <input type="text" id="searchEc" placeholder="Например, LSAR-SW-03 или нагреватель" />
+        </div>
+      </div>
+
+      <table id="ecTable">
+        <thead>
+          <tr>
+            <th>Код ЭК</th>
+            <th>Категория</th>
+            <th>Наименование</th>
+            <th>Описание</th>
+            <th>Текущая версия / ревизия</th>
+            <th>Статус</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <h3 style="margin-top:18px;">Добавление нового ЭК</h3>
+      <form id="addEcForm" class="flex">
+        <div class="grow">
+          <label>Код ЭК *</label>
+          <input type="text" id="ecCode" required />
+        </div>
+        <div class="grow">
+          <label>Категория *</label>
+          <select id="ecCategory" required>
+            <option value="">Выберите</option>
+            <option value="HW">HW</option>
+            <option value="SW">SW</option>
+            <option value="DOC">DOC</option>
+          </select>
+        </div>
+        <div class="grow">
+          <label>Наименование *</label>
+          <input type="text" id="ecName" required />
+        </div>
+        <div class="grow">
+          <label>Описание</label>
+          <input type="text" id="ecDesc" />
+        </div>
+        <div class="grow">
+          <label>Версия / ревизия</label>
+          <input type="text" id="ecVersion" />
+        </div>
+        <div class="grow">
+          <label>Статус *</label>
+          <select id="ecStatus" required>
+            <option value="">Выберите</option>
+            <option>разрабатывается</option>
+            <option>утверждено</option>
+            <option>снято</option>
+            <option>архив</option>
+          </select>
+        </div>
+        <div style="align-self:flex-end;">
+          <button type="submit" class="btn">Добавить ЭК</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Раздел CMDB -->
+    <section id="tab-cmdb" class="card hidden">
+      <h2>CMDB / Данные о конфигурации</h2>
+      <p>CMDB стенда ЛСАР хранит единый реестр ЭК, карточки с версиями и серийными номерами, историю изменений, а также baseline-конфигурации, используемые для аудитов и трассировки.</p>
+      <p>Данный прототип отражает структуру данных: список ЭК, карточки с атрибутами, ссылки на требования/тесты и наборы baseline.</p>
+
+      <div class="tabs" id="cmdbTabs">
+        <button class="tab-btn active" data-target="cmdb-registry">Реестр ЭК</button>
+        <button class="tab-btn" data-target="cmdb-card">Карточка ЭК</button>
+        <button class="tab-btn" data-target="cmdb-baseline">Базовые линии (Baseline)</button>
+      </div>
+
+      <div id="cmdb-registry" class="cmdb-block">
+        <p class="note">Справочный реестр ЭК (read-only).</p>
+        <table id="cmdbEcTable">
+          <thead>
+            <tr>
+              <th>Код ЭК</th>
+              <th>Категория</th>
+              <th>Наименование</th>
+              <th>Описание</th>
+              <th>Версия</th>
+              <th>Статус</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div id="cmdb-card" class="cmdb-block hidden">
+        <div class="flex">
+          <div class="grow">
+            <label for="cardSelect">Выберите ЭК</label>
+            <select id="cardSelect"></select>
+          </div>
+        </div>
+        <div id="cardDetails" class="card" style="margin-top:12px;">
+          <p class="note">Выберите элемент конфигурации для отображения карточки.</p>
+        </div>
+      </div>
+
+      <div id="cmdb-baseline" class="cmdb-block hidden">
+        <div class="flex">
+          <div class="grow">
+            <label for="baselineSelect">Выберите baseline</label>
+            <select id="baselineSelect"></select>
+          </div>
+        </div>
+        <div id="baselineDetails" class="card" style="margin-top:12px;">
+          <h3 id="baselineTitle">Baseline</h3>
+          <table id="baselineTable">
+            <thead>
+              <tr>
+                <th>Код ЭК</th>
+                <th>Версия / Редакция</th>
+                <th>Комментарий</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Раздел изменения -->
+    <section id="tab-cr" class="card hidden">
+      <h2>Изменения (ЗИ / CR)</h2>
+      <p class="note">Упрощённый workflow запросов на изменение (Change Request).</p>
+      <form id="crForm" class="flex">
+        <div class="grow">
+          <label>Номер ЗИ (генерируется)</label>
+          <input type="text" id="crNumber" disabled />
+        </div>
+        <div class="grow">
+          <label>Инициатор *</label>
+          <input type="text" id="crAuthor" required />
+        </div>
+        <div class="grow">
+          <label>Дата</label>
+          <input type="date" id="crDate" />
+        </div>
+        <div class="grow">
+          <label>Срочность</label>
+          <select id="crUrgency">
+            <option>низкая</option>
+            <option selected>средняя</option>
+            <option>высокая</option>
+          </select>
+        </div>
+        <div class="grow">
+          <label>Влияние на требования</label>
+          <div class="inline"><input type="checkbox" id="crReqImpact" /> Да</div>
+        </div>
+        <div class="grow" style="min-width:260px;">
+          <label>Затрагиваемые ЭК</label>
+          <div id="crEcList"></div>
+        </div>
+        <div class="grow" style="flex-basis:100%;">
+          <label>Описание предлагаемого изменения *</label>
+          <textarea id="crDesc" required></textarea>
+        </div>
+        <div class="grow" style="flex-basis:100%;">
+          <label>Обоснование / причина *</label>
+          <textarea id="crReason" required></textarea>
+        </div>
+        <div style="align-self:flex-end;">
+          <button type="submit" class="btn">Создать ЗИ</button>
+        </div>
+      </form>
+
+      <table id="crTable" style="margin-top:18px;">
+        <thead>
+          <tr>
+            <th>Номер ЗИ</th>
+            <th>Дата</th>
+            <th>Инициатор</th>
+            <th>Описание</th>
+            <th>Статус</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <div id="crDetails" class="card" style="margin-top:12px;">
+        <h3>Карточка ЗИ</h3>
+        <p class="note">Выберите запись в таблице, чтобы просмотреть детали.</p>
+        <div id="crDetailsContent"></div>
+      </div>
+    </section>
+
+    <!-- Раздел аудитов -->
+    <section id="tab-audit" class="card hidden">
+      <h2>Аудиты</h2>
+      <p class="note">Логика соответствует разделу «Аудит конфигурации» Плана УК.</p>
+      <table id="auditTable">
+        <thead>
+          <tr>
+            <th>Номер аудита</th>
+            <th>Дата</th>
+            <th>Тип</th>
+            <th>Объект</th>
+            <th>Статус</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div id="auditReport" class="card" style="margin-top:12px;">
+        <h3>Отчёт по аудиту</h3>
+        <p class="note">Выберите аудит для просмотра краткого отчёта.</p>
+        <div id="auditDetails"></div>
+      </div>
+    </section>
+
+    <!-- Раздел baseline и трассировки -->
+    <section id="tab-baseline" class="card hidden">
+      <h2>Baseline и трассировка</h2>
+      <p>Матрица трассируемости требования → ЭК → испытания помогает анализировать воздействие изменений. Если меняется PID, видно связанные требования и ПМИ.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Требование</th>
+            <th>Элементы конфигурации</th>
+            <th>Тесты ПМИ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Стенд должен поддерживать температуру жидкости с точностью ±1°C.</td>
+            <td>
+              <div class="tag">LSAR-SW-03 (PID-регулятор)</div>
+              <div class="tag">LSAR-HW-05 (датчики температуры)</div>
+              <div class="tag">LSAR-HW-04 (радиатор с вентиляторами)</div>
+              <div class="tag">LSAR-HW-03 (нагреватель)</div>
+            </td>
+            <td>ПМИ – Тест 3.1, 3.2, 3.3</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
+
+  <script>
+    // === Исходные данные: эмуляция CMDB для ЭК ===
+    const ecData = [
+      { code: 'LSAR-HW-01', category: 'HW', name: 'Насос 24 В', desc: 'Циркуляционный насос 24 В для контура охлаждения', version: 'Rev A', status: 'утверждено' },
+      { code: 'LSAR-HW-03', category: 'HW', name: 'Погружной нагреватель', desc: 'Основной нагреватель теплоносителя', version: 'Rev A', status: 'утверждено' },
+      { code: 'LSAR-HW-04', category: 'HW', name: 'Радиатор с вентиляторами', desc: 'Блок охлаждения с регулируемой скоростью', version: 'Rev B', status: 'утверждено' },
+      { code: 'LSAR-HW-05', category: 'HW', name: 'Датчики температуры DS18B20', desc: 'Цифровые датчики температуры в контуре', version: 'Rev A', status: 'утверждено' },
+      { code: 'LSAR-HW-06', category: 'HW', name: 'Датчики давления EN837-1', desc: 'Манометрические датчики давления', version: 'Rev A', status: 'утверждено' },
+      { code: 'LSAR-HW-07', category: 'HW', name: 'Расходомер', desc: 'Датчик расхода теплоносителя', version: 'Rev A', status: 'разрабатывается' },
+      { code: 'LSAR-HW-09', category: 'HW', name: 'Плата MOSFET силовой коммутации', desc: 'Модуль коммутации нагрузок', version: 'Rev A', status: 'утверждено' },
+      { code: 'LSAR-SW-01', category: 'SW', name: 'Прошивка ESP32 (основной контроллер)', desc: 'Программное обеспечение управления стендом', version: 'v1.0', status: 'утверждено' },
+      { code: 'LSAR-SW-03', category: 'SW', name: 'PID-регулятор температуры', desc: 'Алгоритм управления нагревателем и радиатором', version: 'v1.0', status: 'утверждено' },
+      { code: 'LSAR-DOC-03', category: 'DOC', name: 'Паспорт изделия ЛСАР', desc: 'Эксплуатационная документация', version: 'Ред.1', status: 'утверждено' },
+      { code: 'LSAR-DOC-04', category: 'DOC', name: 'Электрическая схема', desc: 'Принципиальная схема стенда', version: 'Ред.1', status: 'утверждено' },
+      { code: 'LSAR-DOC-05', category: 'DOC', name: 'Гидравлическая схема', desc: 'Схема гидравлической части', version: 'Ред.1', status: 'утверждено' },
+      { code: 'LSAR-DOC-07', category: 'DOC', name: 'Журнал изменений конфигурации', desc: 'История изменений и релизов', version: 'Ред.1', status: 'утверждено' }
+    ];
+
+    // Карточки ЭК: детализация атрибутов и связей
+    const ecCards = {
+      'LSAR-SW-03': {
+        req: 'Поддержание температуры с точностью ±1°C',
+        tests: 'ПМИ – Тест 3.1, 3.2, 3.3',
+        jira: true,
+        git: true
+      }
+    };
+
+    // Baseline с перечнем версий ЭК
+    const baselines = [
+      {
+        name: 'Baseline 1.0',
+        date: '01.09.2025',
+        description: 'Первая эксплуатационная конфигурация',
+        items: [
+          { code: 'LSAR-SW-01', version: 'v1.0', comment: 'Базовая прошивка' },
+          { code: 'LSAR-SW-03', version: 'v1.0', comment: 'Базовый PID' },
+          { code: 'LSAR-DOC-03', version: 'Ред.1', comment: 'Паспорт' },
+          { code: 'LSAR-DOC-04', version: 'Ред.1', comment: 'Электрическая схема' },
+          { code: 'LSAR-DOC-05', version: 'Ред.1', comment: 'Гидравлическая схема' }
+        ]
+      },
+      {
+        name: 'Baseline 1.1',
+        date: '01.12.2025',
+        description: 'Обновление PID и части документации',
+        items: [
+          { code: 'LSAR-SW-01', version: 'v1.1', comment: 'Прошивка ESP32 v1.1' },
+          { code: 'LSAR-SW-03', version: 'v1.1', comment: 'PID улучшенная стабильность' },
+          { code: 'LSAR-DOC-03', version: 'Ред.2', comment: 'Паспорт обновлён' },
+          { code: 'LSAR-DOC-04', version: 'Ред.1', comment: 'Электросхема без изменений' },
+          { code: 'LSAR-DOC-05', version: 'Ред.1', comment: 'Гидросхема без изменений' }
+        ]
+      }
+    ];
+
+    // ЗИ (CR) – упрощённый журнал изменений
+    const changeRequests = [
+      {
+        number: 'CR-1',
+        date: '2025-10-15',
+        author: 'Петров',
+        desc: 'Обновление прошивки до v1.1 для улучшения стабильности PID',
+        reason: 'Повышение устойчивости регулирования при нагрузках',
+        urgency: 'средняя',
+        impacted: ['LSAR-SW-01', 'LSAR-SW-03', 'LSAR-DOC-03'],
+        reqImpact: true,
+        status: 'Одобрено'
+      }
+    ];
+
+    // Аудиты конфигурации
+    const audits = [
+      {
+        id: 'INT-2025-1',
+        date: '01.12.2025',
+        type: 'PCA / FCA',
+        object: 'Экземпляр №1, Baseline 1.1',
+        status: 'Завершён',
+        goal: 'Проверка полноты и корректности реализации конфигурации по baseline 1.1',
+        scope: 'Аппаратная часть, ПО контроллера, эксплуатационная документация',
+        findings: [
+          'NC-1 – На плате LSAR-HW-09 отсутствует маркировка ревизии',
+          'NC-2 – Паспорт LSAR-DOC-03 не содержит информации о замене датчика давления'
+        ],
+        conclusion: 'В целом соответствует, выявлено 2 несоответствия (Minor/Major).'
+      }
+    ];
+
+    // === Вспомогательные функции отрисовки таблиц ===
+    const ecTableBody = document.querySelector('#ecTable tbody');
+    const cmdbEcTableBody = document.querySelector('#cmdbEcTable tbody');
+    const searchEcInput = document.getElementById('searchEc');
+
+    function renderEcTable(filter = '') {
+      const rows = ecData
+        .filter(ec => ec.code.toLowerCase().includes(filter) || ec.name.toLowerCase().includes(filter))
+        .map(ec => `<tr><td>${ec.code}</td><td>${ec.category}</td><td>${ec.name}</td><td>${ec.desc}</td><td>${ec.version}</td><td>${ec.status}</td></tr>`)
+        .join('');
+      ecTableBody.innerHTML = rows || '<tr><td colspan="6">Ничего не найдено</td></tr>';
+      cmdbEcTableBody.innerHTML = rows || '<tr><td colspan="6">Ничего не найдено</td></tr>';
+    }
+
+    // === Логика добавления ЭК (эмуляция записи в CMDB) ===
+    const addEcForm = document.getElementById('addEcForm');
+    addEcForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const code = document.getElementById('ecCode').value.trim();
+      const category = document.getElementById('ecCategory').value;
+      const name = document.getElementById('ecName').value.trim();
+      const desc = document.getElementById('ecDesc').value.trim();
+      const version = document.getElementById('ecVersion').value.trim();
+      const status = document.getElementById('ecStatus').value;
+
+      // Простая валидация код/категория/статус
+      const allowedCategories = ['HW', 'SW', 'DOC'];
+      const allowedStatuses = ['разрабатывается', 'утверждено', 'снято', 'архив'];
+      if (!code || !allowedCategories.includes(category) || !allowedStatuses.includes(status)) {
+        alert('Проверьте корректность кода, категории или статуса.');
+        return;
+      }
+
+      ecData.push({ code, category, name, desc, version, status });
+      renderEcTable(searchEcInput.value.trim().toLowerCase());
+      populateEcCardSelect();
+      renderCrEcCheckboxes();
+      addEcForm.reset();
+    });
+
+    searchEcInput.addEventListener('input', (e) => {
+      renderEcTable(e.target.value.trim().toLowerCase());
+    });
+
+    // === Верхний уровень: переключение разделов SPA ===
+    document.querySelectorAll('#mainTabs .tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#mainTabs .tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('section').forEach(sec => sec.classList.add('hidden'));
+        document.getElementById(btn.dataset.target).classList.remove('hidden');
+      });
+    });
+
+    // === Внутренние табы CMDB ===
+    document.querySelectorAll('#cmdbTabs .tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#cmdbTabs .tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.cmdb-block').forEach(block => block.classList.add('hidden'));
+        document.getElementById(btn.dataset.target).classList.remove('hidden');
+      });
+    });
+
+    // === Карточка ЭК ===
+    const cardSelect = document.getElementById('cardSelect');
+    const cardDetails = document.getElementById('cardDetails');
+
+    function populateEcCardSelect() {
+      cardSelect.innerHTML = ecData.map(ec => `<option value="${ec.code}">${ec.code} – ${ec.name}</option>`).join('');
+      if (ecData.length) {
+        cardSelect.value = ecData[0].code;
+        renderCard(ecData[0].code);
+      }
+    }
+
+    function renderCard(code) {
+      const ec = ecData.find(item => item.code === code);
+      if (!ec) return;
+      const card = ecCards[code] || {};
+      cardDetails.innerHTML = `
+        <h3>${ec.code} – ${ec.name}</h3>
+        <p><strong>Категория:</strong> ${ec.category}</p>
+        <p><strong>Текущая версия/ревизия:</strong> ${ec.version || 'н/д'}</p>
+        <p><strong>Описание:</strong> ${ec.desc || 'н/д'}</p>
+        <p><strong>Связанные требования:</strong> ${card.req || '—'}</p>
+        <p><strong>Связанные тесты / ПМИ:</strong> ${card.tests || '—'}</p>
+        <p><strong>Ссылки:</strong> Jira: <input type="checkbox" disabled ${card.jira ? 'checked' : ''}/> Git: <input type="checkbox" disabled ${card.git ? 'checked' : ''}/></p>
+      `;
+    }
+
+    cardSelect.addEventListener('change', (e) => renderCard(e.target.value));
+
+    // === Baseline ===
+    const baselineSelect = document.getElementById('baselineSelect');
+    const baselineTitle = document.getElementById('baselineTitle');
+    const baselineTableBody = document.querySelector('#baselineTable tbody');
+
+    function populateBaselines() {
+      baselineSelect.innerHTML = baselines.map((b, idx) => `<option value="${idx}">${b.name} (${b.date})</option>`).join('');
+      renderBaseline(0);
+    }
+
+    function renderBaseline(index) {
+      const base = baselines[index];
+      if (!base) return;
+      baselineTitle.textContent = `${base.name} – ${base.date}: ${base.description}`;
+      baselineTableBody.innerHTML = base.items.map(item => `<tr><td>${item.code}</td><td>${item.version}</td><td>${item.comment}</td></tr>`).join('');
+    }
+
+    baselineSelect.addEventListener('change', (e) => renderBaseline(e.target.value));
+
+    // === ЗИ / CR ===
+    const crForm = document.getElementById('crForm');
+    const crNumberInput = document.getElementById('crNumber');
+    const crDateInput = document.getElementById('crDate');
+    const crTableBody = document.querySelector('#crTable tbody');
+    const crDetailsContent = document.getElementById('crDetailsContent');
+    const crEcList = document.getElementById('crEcList');
+
+    function renderCrEcCheckboxes() {
+      crEcList.innerHTML = ecData.map(ec => `<label class="inline"><input type="checkbox" value="${ec.code}" /> ${ec.code}</label>`).join('');
+    }
+
+    function nextCrNumber() {
+      const nextId = changeRequests.length + 1;
+      return `CR-${nextId}`;
+    }
+
+    function renderCrTable() {
+      crTableBody.innerHTML = changeRequests.map(cr => `
+        <tr data-cr="${cr.number}">
+          <td>${cr.number}</td>
+          <td>${cr.date}</td>
+          <td>${cr.author}</td>
+          <td>${cr.desc}</td>
+          <td>
+            <select class="status-select" data-cr="${cr.number}">
+              ${['Новый', 'На рассмотрении ККС', 'Одобрено', 'Отклонено', 'В работе', 'Закрыто'].map(status => `<option ${cr.status === status ? 'selected' : ''}>${status}</option>`).join('')}
+            </select>
+          </td>
+        </tr>`).join('');
+    }
+
+    function renderCrDetails(number) {
+      const cr = changeRequests.find(c => c.number === number);
+      if (!cr) return;
+      crDetailsContent.innerHTML = `
+        <p><strong>Номер:</strong> ${cr.number}</p>
+        <p><strong>Дата:</strong> ${cr.date}</p>
+        <p><strong>Инициатор:</strong> ${cr.author}</p>
+        <p><strong>Срочность:</strong> ${cr.urgency}</p>
+        <p><strong>Влияние на требования:</strong> ${cr.reqImpact ? 'Да' : 'Нет'}</p>
+        <p><strong>Описание:</strong> ${cr.desc}</p>
+        <p><strong>Обоснование:</strong> ${cr.reason}</p>
+        <p><strong>Затрагиваемые ЭК:</strong> ${cr.impacted.join(', ')}</p>
+        <p><strong>Статус:</strong> ${cr.status}</p>
+      `;
+    }
+
+    crForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const number = nextCrNumber();
+      const author = document.getElementById('crAuthor').value.trim();
+      const date = crDateInput.value || new Date().toISOString().slice(0, 10);
+      const desc = document.getElementById('crDesc').value.trim();
+      const reason = document.getElementById('crReason').value.trim();
+      const urgency = document.getElementById('crUrgency').value;
+      const reqImpact = document.getElementById('crReqImpact').checked;
+      const impacted = Array.from(crEcList.querySelectorAll('input:checked')).map(i => i.value);
+
+      if (!author || !desc || !reason) {
+        alert('Заполните обязательные поля: инициатор, описание, обоснование.');
+        return;
+      }
+
+      changeRequests.push({ number, date, author, desc, reason, urgency, reqImpact, impacted, status: 'Новый' });
+      renderCrTable();
+      crNumberInput.value = nextCrNumber();
+      crForm.reset();
+    });
+
+    crTableBody.addEventListener('click', (e) => {
+      const row = e.target.closest('tr');
+      if (row) renderCrDetails(row.dataset.cr);
+    });
+
+    crTableBody.addEventListener('change', (e) => {
+      if (e.target.classList.contains('status-select')) {
+        const number = e.target.dataset.cr;
+        const cr = changeRequests.find(c => c.number === number);
+        if (cr) {
+          cr.status = e.target.value;
+          renderCrDetails(number);
+        }
+      }
+    });
+
+    // === Аудиты ===
+    const auditTableBody = document.querySelector('#auditTable tbody');
+    const auditDetails = document.getElementById('auditDetails');
+
+    function renderAudits() {
+      auditTableBody.innerHTML = audits.map(audit => `
+        <tr data-audit="${audit.id}">
+          <td>${audit.id}</td>
+          <td>${audit.date}</td>
+          <td>${audit.type}</td>
+          <td>${audit.object}</td>
+          <td>${audit.status}</td>
+        </tr>`).join('');
+    }
+
+    function renderAuditReport(id) {
+      const audit = audits.find(a => a.id === id);
+      if (!audit) return;
+      auditDetails.innerHTML = `
+        <p><strong>Цель аудита:</strong> ${audit.goal}</p>
+        <p><strong>Область:</strong> ${audit.scope}</p>
+        <p><strong>Обнаруженные несоответствия:</strong></p>
+        <ul>${audit.findings.map(f => `<li>${f}</li>`).join('')}</ul>
+        <p><strong>Заключение:</strong> ${audit.conclusion}</p>
+      `;
+    }
+
+    auditTableBody.addEventListener('click', (e) => {
+      const row = e.target.closest('tr');
+      if (row) renderAuditReport(row.dataset.audit);
+    });
+
+    // === Инициализация страницы ===
+    function init() {
+      renderEcTable();
+      populateEcCardSelect();
+      populateBaselines();
+      renderCrEcCheckboxes();
+      renderCrTable();
+      crNumberInput.value = nextCrNumber();
+      crDateInput.value = new Date().toISOString().slice(0, 10);
+      renderAudits();
+      renderAuditReport(audits[0].id);
+      renderCrDetails(changeRequests[0].number);
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
