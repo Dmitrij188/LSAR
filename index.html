@@ -29,7 +29,14 @@
       <button class="tab-btn" data-target="tab-cr">Изменения (ЗИ / CR)</button>
       <button class="tab-btn" data-target="tab-audit">Аудиты</button>
       <button class="tab-btn" data-target="tab-baseline">Baseline и трассировка</button>
-      <button class="tab-btn" data-target="tab-scheme">Интерактивная схема</button>
+      <div class="tab-with-tooltip">
+        <button class="tab-btn" data-target="tab-interactive-schemes">Интерактивные схемы</button>
+        <div class="tab-tooltip">
+          <div><strong>HW</strong> – электрическая схема стенда</div>
+          <div><strong>SW</strong> – схема программного обеспечения</div>
+          <div><strong>DOC</strong> – схема документации и связей</div>
+        </div>
+      </div>
     </div>
 
     <!-- Раздел ЭК -->
@@ -281,10 +288,15 @@
       </table>
     </section>
 
-    <!-- Раздел интерактивной схемы -->
-    <section id="tab-scheme" class="card hidden">
-      <h2>Интерактивная схема</h2>
-      <p class="note">Визуализация электрической схемы ЛСАР с привязкой к ЭК, ЗИ и аудитам.</p>
+    <!-- Раздел интерактивных схем -->
+    <section id="tab-interactive-schemes" class="card hidden">
+      <h2>Интерактивные схемы</h2>
+      <p class="note">Визуализация электрической, программной и документационной схем ЛСАР с привязкой к ЭК, ЗИ и аудитам.</p>
+      <div class="scheme-submenu" id="schemeSubmenu">
+        <button class="tab-btn active" data-scheme-target="HW">HW-схема</button>
+        <button class="tab-btn" data-scheme-target="SW">SW-схема</button>
+        <button class="tab-btn" data-scheme-target="DOC">DOC-схема</button>
+      </div>
       <div class="pill-toggle" style="margin-bottom:10px;">
         <input type="checkbox" id="schemeEditToggle" />
         <label for="schemeEditToggle" style="margin:0; font-weight:600;">Режим добавления новых ЭК</label>
@@ -292,14 +304,43 @@
       <p class="scheme-note">В режиме добавления клик по схеме открывает форму для создания нового узла и привязки его к существующим ЭК.</p>
       <div class="scheme-layout">
         <div class="scheme-area">
-          <div id="scheme-container">
-            <img id="lsar-scheme" src="lsar-scheme.png" alt="Схема ЛСАР" />
-            <!-- Маркеры узлов будут добавлены скриптом -->
+          <div id="scheme-hw" class="scheme-view">
+            <div id="scheme-container">
+              <img id="lsar-scheme" src="lsar-scheme.png" alt="Схема ЛСАР" />
+              <!-- Маркеры узлов будут добавлены скриптом -->
+            </div>
+          </div>
+          <div id="scheme-sw" class="scheme-view hidden">
+            <div id="scheme-sw-diagram" class="diagram-grid sw-grid">
+              <div class="diagram-node" data-node-id="SW_MAIN">main() / инициализация</div>
+              <div class="diagram-node" data-node-id="SW_TASKS">Задачи FreeRTOS</div>
+              <div class="diagram-node" data-node-id="SW_PUMP">Task_PumpCtrl</div>
+              <div class="diagram-node" data-node-id="SW_FANS">Task_FansCtrl</div>
+              <div class="diagram-node" data-node-id="SW_TEMP">Task_TempControl</div>
+              <div class="diagram-node" data-node-id="SW_LOG">Task_Logging</div>
+              <div class="diagram-node" data-node-id="SW_PID">PID-регулятор (LSAR-SW-03)</div>
+              <div class="diagram-node" data-node-id="SW_DRIVERS">Драйверы датчиков</div>
+              <div class="diagram-node" data-node-id="SW_CONFIG">Конфигурация и калибровки</div>
+              <div class="diagram-node" data-node-id="SW_DIAG">Интерфейс диагностики</div>
+            </div>
+          </div>
+          <div id="scheme-doc" class="scheme-view hidden">
+            <div id="scheme-doc-diagram" class="diagram-grid doc-grid">
+              <div class="diagram-node" data-node-id="DOC_REQ">Требования (LSAR-REQ)</div>
+              <div class="diagram-node" data-node-id="DOC_FTT">LSAR-DOC-01 ФТТ</div>
+              <div class="diagram-node" data-node-id="DOC_PMI">LSAR-DOC-02 ПМИ</div>
+              <div class="diagram-node" data-node-id="DOC_PASSPORT">LSAR-DOC-03 Паспорт изделия</div>
+              <div class="diagram-node" data-node-id="DOC_ELEC">LSAR-DOC-04 Электрическая схема</div>
+              <div class="diagram-node" data-node-id="DOC_HYDRO">LSAR-DOC-05 Гидравлическая схема</div>
+              <div class="diagram-node" data-node-id="DOC_JOURNAL">LSAR-DOC-07 Журнал изменений</div>
+              <div class="diagram-node" data-node-id="DOC_BASE10">Baseline 1.0</div>
+              <div class="diagram-node" data-node-id="DOC_BASE11">Baseline 1.1</div>
+            </div>
           </div>
         </div>
         <aside class="scheme-info" id="scheme-info-panel">
           <h3 id="schemeInfoTitle">Выберите элемент на схеме</h3>
-          <p id="schemeInfoDesc" class="scheme-note">Наведите на маркер для краткой подсказки или кликните, чтобы открыть карточку узла.</p>
+          <p id="schemeInfoDesc" class="scheme-note">Наведите на элемент схемы для краткой подсказки или кликните, чтобы открыть карточку узла.</p>
           <div id="schemeInfoContent"></div>
         </aside>
       </div>

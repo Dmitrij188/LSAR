@@ -26,7 +26,8 @@
     figure { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.06); }
     figure img { width: 100%; border-radius: 6px; }
     figure figcaption { margin-top: 8px; font-size: 13px; font-style: italic; color: var(--muted); }
-    .tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    .tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+    .tab-with-tooltip { position: relative; display: inline-flex; align-items: center; }
     .tab-btn {
       padding: 10px 14px;
       background: #e6effa;
@@ -38,6 +39,9 @@
       box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     }
     .tab-btn.active { background: var(--accent); color: #fff; border-color: #0f6ab4; }
+    .tab-with-tooltip:hover .tab-tooltip { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    .tab-tooltip { position: absolute; top: calc(100% + 4px); left: 0; background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.12); opacity: 0; transform: translateY(6px); transition: all 0.2s ease; pointer-events: none; width: 260px; font-size: 13px; z-index: 5; }
+    .tab-tooltip div + div { margin-top: 4px; }
     .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); margin-bottom: 16px; }
     h2 { margin-top: 0; color: var(--text); }
     p.note { margin-top: -6px; color: var(--muted); font-style: italic; font-size: 13px; }
@@ -84,6 +88,17 @@
     .badge { display: inline-block; padding: 3px 8px; background: #eef3fb; border: 1px solid var(--border); border-radius: 12px; font-size: 12px; margin-right: 6px; margin-bottom: 6px; cursor: pointer; }
     .scheme-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
     .scheme-note { margin: 6px 0 12px; color: var(--muted); font-size: 13px; }
+    .scheme-submenu { display: flex; gap: 8px; margin: 8px 0 12px; flex-wrap: wrap; }
+    .scheme-view.hidden { display: none; }
+    .diagram-grid { display: grid; gap: 12px; position: relative; background: #f9fbff; border: 1px solid var(--border); border-radius: 10px; padding: 14px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.6); }
+    .diagram-node { position: relative; padding: 12px 14px; border: 1px dashed #9ab6d6; border-radius: 8px; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.04); font-weight: 600; cursor: pointer; transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease; }
+    .diagram-node:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+    .diagram-node.selected { border-color: #0f6ab4; box-shadow: 0 0 0 2px rgba(15,106,180,0.15); }
+    .diagram-node.related-node { border-color: #8ec5ff; background: #f3f8ff; }
+    .diagram-grid::before, .diagram-grid::after { content: ''; position: absolute; pointer-events: none; }
+    .sw-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .doc-grid { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
+    .diagram-node .scheme-tooltip { top: auto; bottom: -6px; transform: translate(-50%, 100%); }
     /* Модалка для добавления узла */
     .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 20; }
     .modal-backdrop.hidden { display: none; }
