@@ -190,3 +190,26 @@
       .help-layout { grid-template-columns: 1fr; }
       .legend-panel { position: relative; top: auto; }
     }
+
+    /* === Стили страницы питания LSAR-DOC-04 === */
+    .power-flow { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    .flow-arrow { font-weight: 700; color: var(--accent); padding: 0 4px; }
+    .flow-arrow.vertical { width: 100%; text-align: center; }
+    .power-branch-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; width: 100%; }
+    .power-branch { background: #f9fbff; border: 1px dashed var(--border); border-radius: 10px; padding: 10px; display: grid; gap: 8px; }
+    .power-branch-title { font-weight: 700; color: var(--accent); font-size: 14px; }
+    .power-estop { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    .power-estop .scheme-note { margin: 0; }
+    .comparison-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+    .comparison-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+    .comparison-card h4 { margin-bottom: 6px; margin-top: 12px; }
+    .power-protection-notes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .power-control-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+    .power-control-card { background: #f9fbff; border: 1px solid var(--border); border-radius: 10px; padding: 12px; display: grid; gap: 10px; }
+    .control-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .pump-mode-tabs { margin: 0; }
+    .power-req-list { margin: 0; padding-left: 18px; color: var(--muted); font-size: 13px; }
+    .diagram-node.compact { font-size: 12px; padding: 8px 10px; align-self: center; }
+    .checklist-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+    .checklist-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 12px 12px 12px 36px; position: relative; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+    .checklist-card::before { content: '✓'; position: absolute; left: 12px; top: 12px; color: var(--accent); font-weight: 700; }
