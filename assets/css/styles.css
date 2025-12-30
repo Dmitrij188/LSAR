@@ -204,6 +204,8 @@
     .comparison-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
     .comparison-card h4 { margin-bottom: 6px; margin-top: 12px; }
     .power-protection-notes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .power-protection-card { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 999px; background: #fff; border: 1px solid var(--border); box-shadow: 0 2px 6px rgba(0,0,0,0.06); font-weight: 600; }
+    .power-chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
     .power-control-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
     .power-control-card { background: #f9fbff; border: 1px solid var(--border); border-radius: 10px; padding: 12px; display: grid; gap: 10px; }
     .control-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
@@ -213,3 +215,12 @@
     .checklist-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
     .checklist-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 12px 12px 12px 36px; position: relative; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
     .checklist-card::before { content: '✓'; position: absolute; left: 12px; top: 12px; color: var(--accent); font-weight: 700; }
+    .checklist-title { font-weight: 700; margin-bottom: 6px; }
+    .checklist-text { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
+    .checklist-text:last-child { margin-bottom: 0; }
+    .info-tooltip { position: relative; }
+    .node-tooltip { position: absolute; left: 50%; top: 100%; transform: translate(-50%, -4px); background: rgba(0,0,0,0.88); color: #fff; padding: 10px 12px; border-radius: 8px; width: 260px; font-size: 12px; opacity: 0; pointer-events: none; transition: all 0.2s ease; z-index: 6; }
+    .info-tooltip:hover .node-tooltip { opacity: 1; transform: translate(-50%, 6px); }
+    .node-tooltip .tooltip-title { font-weight: 700; margin-bottom: 4px; }
+    .node-tooltip .tooltip-text { margin-bottom: 8px; }
+    .node-tooltip .tooltip-text:last-child { margin-bottom: 0; }
