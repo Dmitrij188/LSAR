@@ -218,6 +218,11 @@
     .checklist-title { font-weight: 700; margin-bottom: 6px; }
     .checklist-text { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
     .checklist-text:last-child { margin-bottom: 0; }
+    .section-heading { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .section-info-tooltip { display: inline-flex; align-items: center; }
+    .section-info-button { width: 24px; height: 24px; border-radius: 999px; border: 1px solid var(--border); background: #fff; color: var(--accent); font-weight: 700; font-size: 14px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+    .section-info-button:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .section-info-tooltip .node-tooltip { width: 360px; }
     .info-tooltip { position: relative; z-index: 1; }
     .info-tooltip:hover { z-index: 20; }
     .node-tooltip { position: absolute; left: 50%; top: 100%; transform: translate(-50%, -4px); background: rgba(0,0,0,0.88); color: #fff; padding: 10px 12px; border-radius: 8px; width: 260px; font-size: 12px; opacity: 0; pointer-events: none; transition: all 0.2s ease; z-index: 50; }
