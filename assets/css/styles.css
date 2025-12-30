@@ -218,8 +218,9 @@
     .checklist-title { font-weight: 700; margin-bottom: 6px; }
     .checklist-text { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
     .checklist-text:last-child { margin-bottom: 0; }
-    .info-tooltip { position: relative; }
-    .node-tooltip { position: absolute; left: 50%; top: 100%; transform: translate(-50%, -4px); background: rgba(0,0,0,0.88); color: #fff; padding: 10px 12px; border-radius: 8px; width: 260px; font-size: 12px; opacity: 0; pointer-events: none; transition: all 0.2s ease; z-index: 6; }
+    .info-tooltip { position: relative; z-index: 1; }
+    .info-tooltip:hover { z-index: 20; }
+    .node-tooltip { position: absolute; left: 50%; top: 100%; transform: translate(-50%, -4px); background: rgba(0,0,0,0.88); color: #fff; padding: 10px 12px; border-radius: 8px; width: 260px; font-size: 12px; opacity: 0; pointer-events: none; transition: all 0.2s ease; z-index: 50; }
     .info-tooltip:hover .node-tooltip { opacity: 1; transform: translate(-50%, 6px); }
     .node-tooltip .tooltip-title { font-weight: 700; margin-bottom: 4px; }
     .node-tooltip .tooltip-text { margin-bottom: 8px; }
