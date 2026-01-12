@@ -192,11 +192,15 @@
     }
 
     /* === Стили страницы питания LSAR-DOC-04 === */
+    .power-page { --power-node-size: clamp(150px, 18vw, 190px); }
     .power-flow { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    .power-page .power-flow { align-items: stretch; }
     .flow-arrow { font-weight: 700; color: var(--accent); padding: 0 4px; }
+    .power-page .flow-arrow { display: flex; align-items: center; justify-content: center; min-height: var(--power-node-size); font-size: 20px; }
     .flow-arrow.vertical { width: 100%; text-align: center; }
+    .power-page .flow-arrow.vertical { min-height: auto; padding: 6px 0; }
     .power-branch-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; width: 100%; }
-    .power-branch { background: #f9fbff; border: 1px dashed var(--border); border-radius: 10px; padding: 10px; display: grid; gap: 8px; }
+    .power-branch { background: #f9fbff; border: 1px dashed var(--border); border-radius: 10px; padding: 10px; display: grid; gap: 8px; justify-items: center; }
     .power-branch-title { font-weight: 700; color: var(--accent); font-size: 14px; }
     .power-estop { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
     .power-estop .scheme-note { margin: 0; }
@@ -212,6 +216,25 @@
     .pump-mode-tabs { margin: 0; }
     .power-req-list { margin: 0; padding-left: 18px; color: var(--muted); font-size: 13px; }
     .diagram-node.compact { font-size: 12px; padding: 8px 10px; align-self: center; }
+    .power-page .diagram-node {
+      width: var(--power-node-size);
+      height: var(--power-node-size);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 12px;
+    }
+    .power-page .diagram-node.compact {
+      font-size: 12px;
+      padding: 12px;
+    }
+    .power-page .diagram-node.node-ac { background: #fff3e0; border-color: #f3a45f; }
+    .power-page .diagram-node.node-converter { background: #e6f4ff; border-color: #7cb9f1; }
+    .power-page .diagram-node.node-rail { background: #e9f9ef; border-color: #79c98f; }
+    .power-page .diagram-node.node-load { background: #ffe8e8; border-color: #f08a8a; }
+    .power-page .diagram-node.node-control { background: #f0ecff; border-color: #9d8de8; }
+    .power-page .diagram-node.node-safety { background: #fff7d6; border-color: #f0c44c; }
     .checklist-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
     .checklist-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 12px 12px 12px 36px; position: relative; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
     .checklist-card::before { content: '✓'; position: absolute; left: 12px; top: 12px; color: var(--accent); font-weight: 700; }

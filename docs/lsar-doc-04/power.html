@@ -6,7 +6,7 @@
   <title>LSAR-DOC-04 Электрическая схема — питание стенда ЛСАР</title>
   <link rel="stylesheet" href="../../assets/css/styles.css" />
 </head>
-<body>
+<body class="power-page">
   <header>
     <div class="header-row">
       <h1>LSAR-DOC-04 Электрическая схема — питание стенда ЛСАР</h1>
@@ -43,8 +43,8 @@
       <p class="note">Ниже приведена единственная архитектура питания стенда ЛСАР. Другие архитектуры не допускаются в рамках данного проекта.</p>
 
       <div class="power-flow">
-        <div class="diagram-node info-tooltip">
-          Сеть 230 В AC, 50 Гц
+        <div class="diagram-node node-ac info-tooltip">
+          Розетка 230 В AC, 50 Гц
           <div class="node-tooltip">
             <div class="tooltip-title">Что это</div>
             <div class="tooltip-text">Переменное напряжение из розетки. Нужно для питания всего стенда и формирует входной уровень сети.</div>
@@ -53,7 +53,7 @@
           </div>
         </div>
         <div class="flow-arrow">→</div>
-        <div class="diagram-node info-tooltip">
+        <div class="diagram-node node-converter info-tooltip">
           AC/DC источник 12 В (SELV), 20 А
           <div class="node-tooltip">
             <div class="tooltip-title">Что это</div>
@@ -66,7 +66,7 @@
         <div class="power-branch-grid">
           <div class="power-branch">
             <div class="power-branch-title">Ветвь 12V_PWR</div>
-            <div class="diagram-node info-tooltip">
+            <div class="diagram-node node-load info-tooltip">
               Нагреватель 12 В
               <div class="node-tooltip">
                 <div class="tooltip-title">Что это</div>
@@ -78,7 +78,7 @@
           </div>
           <div class="power-branch">
             <div class="power-branch-title">Ветвь DC/DC Boost</div>
-            <div class="diagram-node info-tooltip">
+            <div class="diagram-node node-converter info-tooltip">
               DC/DC Boost 12→24 В
               <div class="node-tooltip">
                 <div class="tooltip-title">Что это</div>
@@ -88,7 +88,7 @@
               </div>
             </div>
             <div class="flow-arrow vertical">↓</div>
-            <div class="diagram-node info-tooltip">
+            <div class="diagram-node node-rail info-tooltip">
               Шина 24V_PUMP
               <div class="node-tooltip">
                 <div class="tooltip-title">Что это</div>
@@ -98,7 +98,7 @@
               </div>
             </div>
             <div class="flow-arrow vertical">↓</div>
-            <div class="diagram-node info-tooltip">
+            <div class="diagram-node node-load info-tooltip">
               Насос 24 В
               <div class="node-tooltip">
                 <div class="tooltip-title">Что это</div>
@@ -110,7 +110,7 @@
           </div>
           <div class="power-branch">
             <div class="power-branch-title">Ветвь DC/DC Buck</div>
-            <div class="diagram-node info-tooltip">
+            <div class="diagram-node node-converter info-tooltip">
               DC/DC Buck 12→5 В
               <div class="node-tooltip">
                 <div class="tooltip-title">Что это</div>
@@ -120,7 +120,7 @@
               </div>
             </div>
             <div class="flow-arrow vertical">↓</div>
-            <div class="diagram-node info-tooltip">
+            <div class="diagram-node node-rail info-tooltip">
               Шина 5V_CTRL
               <div class="node-tooltip">
                 <div class="tooltip-title">Что это</div>
@@ -130,7 +130,7 @@
               </div>
             </div>
             <div class="flow-arrow vertical">↓</div>
-            <div class="diagram-node info-tooltip">
+            <div class="diagram-node node-control info-tooltip">
               ESP32 + датчики
               <div class="node-tooltip">
                 <div class="tooltip-title">Что это</div>
@@ -144,7 +144,7 @@
       </div>
 
       <div class="power-estop">
-        <div class="diagram-node info-tooltip">
+        <div class="diagram-node node-safety info-tooltip">
           E-Stop (аппаратный аварийный разрыв)
           <div class="node-tooltip">
             <div class="tooltip-title">Что это</div>
@@ -170,7 +170,7 @@
       <p class="note">Защиты строятся селективно, чтобы авария в одной ветви не отключала всю систему.</p>
 
       <div class="power-flow">
-        <div class="diagram-node info-tooltip">
+        <div class="diagram-node node-rail info-tooltip">
           Ввод 12 В: 20–25 А
           <div class="node-tooltip">
             <div class="tooltip-title">Что это</div>
@@ -183,7 +183,7 @@
         <div class="power-branch-grid">
           <div class="power-branch">
             <div class="power-branch-title">Нагреватель</div>
-            <div class="diagram-node info-tooltip">
+            <div class="diagram-node node-safety info-tooltip">
               Ветвь нагревателя: 10–15 А
               <div class="node-tooltip">
                 <div class="tooltip-title">Что это</div>
@@ -195,7 +195,7 @@
           </div>
           <div class="power-branch">
             <div class="power-branch-title">Boost (вход 12 В)</div>
-            <div class="diagram-node info-tooltip">
+            <div class="diagram-node node-safety info-tooltip">
               Ветвь Boost: ~10 А
               <div class="node-tooltip">
                 <div class="tooltip-title">Что это</div>
@@ -207,7 +207,7 @@
           </div>
           <div class="power-branch">
             <div class="power-branch-title">Логика 5 В</div>
-            <div class="diagram-node info-tooltip">
+            <div class="diagram-node node-safety info-tooltip">
               Ветвь 5 В: 2–3 А
               <div class="node-tooltip">
                 <div class="tooltip-title">Что это</div>
@@ -287,7 +287,7 @@
             </div>
           </div>
           <div class="power-flow">
-            <div class="diagram-node info-tooltip">
+            <div class="diagram-node node-control info-tooltip">
               ESP32
               <div class="node-tooltip">
                 <div class="tooltip-title">Что это</div>
@@ -297,7 +297,7 @@
               </div>
             </div>
             <div class="flow-arrow">→</div>
-            <div class="diagram-node info-tooltip">
+            <div class="diagram-node node-control info-tooltip">
               MOSFET-ключ
               <div class="node-tooltip">
                 <div class="tooltip-title">Что это</div>
@@ -307,7 +307,7 @@
               </div>
             </div>
             <div class="flow-arrow">→</div>
-            <div class="diagram-node info-tooltip">
+            <div class="diagram-node node-load info-tooltip">
               Нагреватель 12 В
               <div class="node-tooltip">
                 <div class="tooltip-title">Что это</div>
@@ -323,7 +323,7 @@
         <div class="power-control-card">
           <h3>Насос 24 В: включение/выключение</h3>
           <div class="power-flow">
-            <div class="diagram-node info-tooltip">
+            <div class="diagram-node node-control info-tooltip">
               ESP32
               <div class="node-tooltip">
                 <div class="tooltip-title">Что это</div>
@@ -333,7 +333,7 @@
               </div>
             </div>
             <div class="flow-arrow">→</div>
-            <div class="diagram-node info-tooltip">
+            <div class="diagram-node node-control info-tooltip">
               MOSFET-ключ
               <div class="node-tooltip">
                 <div class="tooltip-title">Что это</div>
@@ -343,7 +343,7 @@
               </div>
             </div>
             <div class="flow-arrow">→</div>
-            <div class="diagram-node info-tooltip">
+            <div class="diagram-node node-load info-tooltip">
               Насос 24 В
               <div class="node-tooltip">
                 <div class="tooltip-title">Что это</div>
@@ -352,7 +352,8 @@
                 <div class="tooltip-text">Номинал 2 А, пик до 4 А. Защита от выбросов обязательна.</div>
               </div>
             </div>
-            <div class="diagram-node compact info-tooltip">
+            <div class="flow-arrow">→</div>
+            <div class="diagram-node compact node-safety info-tooltip">
               TVS/flyback
               <div class="node-tooltip">
                 <div class="tooltip-title">Что это</div>
