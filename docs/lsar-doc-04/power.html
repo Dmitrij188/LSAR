@@ -43,100 +43,349 @@
       <p class="note">Ниже приведена единственная архитектура питания стенда ЛСАР. Другие архитектуры не допускаются в рамках данного проекта.</p>
 
       <div class="power-flow">
-        <div class="diagram-node info-tooltip">
-          Сеть 230 В AC, 50 Гц
-          <div class="node-tooltip">
-            <div class="tooltip-title">Что это</div>
-            <div class="tooltip-text">Переменное напряжение из розетки. Нужно для питания всего стенда и формирует входной уровень сети.</div>
-            <div class="tooltip-title">Требование</div>
-            <div class="tooltip-text">Диапазон 207–253 В, 50 Гц. Отклонения вне диапазона запрещены для работы стенда.</div>
+        <div class="diagram-node node-info">
+          <button class="node-info-trigger" type="button" aria-expanded="false" aria-controls="node-ac-230-popover">
+            <span class="node-title">Сеть 230 В AC, 50 Гц</span>
+            <span class="node-req-indicator" aria-hidden="true">REQ 3</span>
+          </button>
+          <div class="node-hint" role="tooltip">Ввод сети стенда. Отсюда питание попадает внутрь корпуса.</div>
+          <div class="node-popover" id="node-ac-230-popover" role="dialog" aria-label="Сеть 230 В AC, 50 Гц — подробности">
+            <div class="node-popover-header">
+              <span>Сеть 230 В AC, 50 Гц</span>
+              <span class="node-popover-tag">Ввод</span>
+            </div>
+            <details class="node-accordion" open>
+              <summary>Что это</summary>
+              <p>Переменное напряжение из розетки, которое запускает всю систему питания стенда. Это стартовая точка для всех последующих преобразований напряжения.</p>
+            </details>
+            <details class="node-accordion">
+              <summary>Где находится в стенде</summary>
+              <p>Сетевой ввод на корпусе стенда и ближайший к нему клеммник внутри силового отсека.</p>
+            </details>
+            <details class="node-accordion">
+              <summary>Требования (обязательные)</summary>
+              <ul class="node-req-list">
+                <li>Должно быть 207–253 В, 50 Гц.</li>
+                <li>Необходимо подключение к сети с защитным PE при БП класса I.</li>
+                <li>Запрещено питание от нестабильных или повреждённых розеток.</li>
+              </ul>
+            </details>
+            <details class="node-accordion">
+              <summary>Почему это важно</summary>
+              <p>Отклонения по напряжению перегружают блок питания и защиты. Это вызывает сбои и сокращает ресурс оборудования.</p>
+            </details>
           </div>
         </div>
         <div class="flow-arrow">→</div>
-        <div class="diagram-node info-tooltip">
-          AC/DC источник 12 В (SELV), 20 А
-          <div class="node-tooltip">
-            <div class="tooltip-title">Что это</div>
-            <div class="tooltip-text">Блок питания, который превращает 230 В AC в безопасные 12 В DC. SELV означает «безопасное сверхнизкое напряжение» для человека и нужно для защиты пользователя.</div>
-            <div class="tooltip-title">Требование</div>
-            <div class="tooltip-text">12 В, ≥20 А (≥240 Вт). Защиты OCP/OVP/OTP/SCP обязательны.</div>
+        <div class="diagram-node node-info">
+          <button class="node-info-trigger" type="button" aria-expanded="false" aria-controls="node-acdc-12-popover">
+            <span class="node-title">AC/DC источник 12 В (SELV), 20 А</span>
+            <span class="node-req-indicator" aria-hidden="true">REQ 3</span>
+          </button>
+          <div class="node-hint" role="tooltip">Основной блок питания. Делает безопасные 12 В для всего стенда.</div>
+          <div class="node-popover" id="node-acdc-12-popover" role="dialog" aria-label="AC/DC источник 12 В — подробности">
+            <div class="node-popover-header">
+              <span>AC/DC источник 12 В (SELV), 20 А</span>
+              <span class="node-popover-tag">Блок питания</span>
+            </div>
+            <details class="node-accordion" open>
+              <summary>Что это</summary>
+              <p>Импульсный блок питания, который преобразует 230 В AC в безопасные 12 В DC для всей силовой архитектуры.</p>
+            </details>
+            <details class="node-accordion">
+              <summary>Где находится в стенде</summary>
+              <p>Внутри корпуса, в силовом отсеке рядом с сетевым вводом и защитами.</p>
+            </details>
+            <details class="node-accordion">
+              <summary>Требования (обязательные)</summary>
+              <ul class="node-req-list">
+                <li>Должно выдавать 12 В DC, ≥20 А (≥240 Вт).</li>
+                <li>Необходимо исполнение SELV и гальваническая изоляция от сети.</li>
+                <li>Обязательны защиты OCP/OVP/OTP/SCP.</li>
+              </ul>
+            </details>
+            <details class="node-accordion">
+              <summary>Почему это важно</summary>
+              <p>Без стабильного источника 12 В все ветви питания теряют запас по току и уходят в аварии.</p>
+            </details>
           </div>
         </div>
         <div class="flow-arrow">→</div>
         <div class="power-branch-grid">
           <div class="power-branch">
             <div class="power-branch-title">Ветвь 12V_PWR</div>
-            <div class="diagram-node info-tooltip">
-              Нагреватель 12 В
-              <div class="node-tooltip">
-                <div class="tooltip-title">Что это</div>
-                <div class="tooltip-text">Нагревательный элемент, превращающий электричество в тепло. Нужен для нагрева воды в контуре.</div>
-                <div class="tooltip-title">Требование</div>
-                <div class="tooltip-text">Мощность 80–100 Вт, ток 6.7–8.3 А. MOSFET-ключ + PWM обязателен, предохранитель 10–15 А.</div>
+            <div class="diagram-node node-info">
+              <button class="node-info-trigger" type="button" aria-expanded="false" aria-controls="node-12v-pwr-popover">
+                <span class="node-title">Шина 12V_PWR</span>
+                <span class="node-req-indicator" aria-hidden="true">REQ 3</span>
+              </button>
+              <div class="node-hint" role="tooltip">Основная силовая шина 12 В внутри стенда.</div>
+              <div class="node-popover" id="node-12v-pwr-popover" role="dialog" aria-label="Шина 12V_PWR — подробности">
+                <div class="node-popover-header">
+                  <span>Шина 12V_PWR</span>
+                  <span class="node-popover-tag">Шина питания</span>
+                </div>
+                <details class="node-accordion" open>
+                  <summary>Что это</summary>
+                  <p>Основная силовая линия 12 В, питающая нагреватель и другие силовые узлы.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Где находится в стенде</summary>
+                  <p>В силовом отсеке, на распределительных клеммах и в жгуте силового питания.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Требования (обязательные)</summary>
+                  <ul class="node-req-list">
+                    <li>Маркировка 12V_PWR обязательна.</li>
+                    <li>Сечение проводов должно быть рассчитано на ток до 20 А.</li>
+                    <li>Запрещено подключать логические нагрузки без отдельного преобразователя.</li>
+                  </ul>
+                </details>
+                <details class="node-accordion">
+                  <summary>Почему это важно</summary>
+                  <p>Перегрузка шины 12 В приводит к перегреву проводов и падению напряжения.</p>
+                </details>
+              </div>
+            </div>
+            <div class="diagram-node node-info">
+              <button class="node-info-trigger" type="button" aria-expanded="false" aria-controls="node-heater-12-popover">
+                <span class="node-title">Нагреватель 12 В</span>
+                <span class="node-req-indicator" aria-hidden="true">REQ 3</span>
+              </button>
+              <div class="node-hint" role="tooltip">Силовая нагрузка, которая греет воду в контуре.</div>
+              <div class="node-popover" id="node-heater-12-popover" role="dialog" aria-label="Нагреватель 12 В — подробности">
+                <div class="node-popover-header">
+                  <span>Нагреватель 12 В</span>
+                  <span class="node-popover-tag">Нагрузка</span>
+                </div>
+                <details class="node-accordion" open>
+                  <summary>Что это</summary>
+                  <p>Нагревательный элемент, превращающий электричество в тепло для нагрева воды.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Где находится в стенде</summary>
+                  <p>В силовой ветви 12V_PWR, в гидравлическом узле внутри корпуса.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Требования (обязательные)</summary>
+                  <ul class="node-req-list">
+                    <li>Должна быть мощность 80–100 Вт (ток 6.7–8.3 А).</li>
+                    <li>Необходимо управление через MOSFET-ключ и PWM/ШИМ.</li>
+                    <li>Должен быть предохранитель 10–15 А в ветви нагревателя.</li>
+                  </ul>
+                </details>
+                <details class="node-accordion">
+                  <summary>Почему это важно</summary>
+                  <p>Без корректного управления и защиты нагреватель перегревается и создаёт риск повреждения проводки.</p>
+                </details>
               </div>
             </div>
           </div>
           <div class="power-branch">
             <div class="power-branch-title">Ветвь DC/DC Boost</div>
-            <div class="diagram-node info-tooltip">
-              DC/DC Boost 12→24 В
-              <div class="node-tooltip">
-                <div class="tooltip-title">Что это</div>
-                <div class="tooltip-text">Повышающий преобразователь, который из 12 В делает 24 В для насоса. Нужен для питания насоса без перегрузки 12 В линии.</div>
-                <div class="tooltip-title">Требование</div>
-                <div class="tooltip-text">Выход 24 В, ≥5 А, КПД ≥0.9. Входной ток до ~9 А допускается кратковременно.</div>
+            <div class="diagram-node node-info">
+              <button class="node-info-trigger" type="button" aria-expanded="false" aria-controls="node-boost-popover">
+                <span class="node-title">DC/DC Boost 12→24 В</span>
+                <span class="node-req-indicator" aria-hidden="true">REQ 3</span>
+              </button>
+              <div class="node-hint" role="tooltip">Повышает 12 В до 24 В для питания насоса.</div>
+              <div class="node-popover" id="node-boost-popover" role="dialog" aria-label="DC/DC Boost 12→24 В — подробности">
+                <div class="node-popover-header">
+                  <span>DC/DC Boost 12→24 В</span>
+                  <span class="node-popover-tag">Преобразователь</span>
+                </div>
+                <details class="node-accordion" open>
+                  <summary>Что это</summary>
+                  <p>Повышающий преобразователь, который из 12 В делает 24 В для ветви насоса.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Где находится в стенде</summary>
+                  <p>В силовом отсеке внутри корпуса, между 12V_PWR и 24V_PUMP.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Требования (обязательные)</summary>
+                  <ul class="node-req-list">
+                    <li>Должен выдавать 24 В при токе ≥5 А.</li>
+                    <li>Необходимы защиты OCP/OVP/OTP.</li>
+                    <li>Проводка должна выдерживать входной ток до ~9 А кратковременно.</li>
+                  </ul>
+                </details>
+                <details class="node-accordion">
+                  <summary>Почему это важно</summary>
+                  <p>Недостаточная мощность или защита приводит к просадкам 24 В и сбоям насоса.</p>
+                </details>
               </div>
             </div>
             <div class="flow-arrow vertical">↓</div>
-            <div class="diagram-node info-tooltip">
-              Шина 24V_PUMP
-              <div class="node-tooltip">
-                <div class="tooltip-title">Что это</div>
-                <div class="tooltip-text">Шина — общий провод питания для группы устройств. Нужна для распределения 24 В только на насос.</div>
-                <div class="tooltip-title">Требование</div>
-                <div class="tooltip-text">Маркировка 24V_PUMP обязательна, ток по ветви рассчитывается под насос.</div>
+            <div class="diagram-node node-info">
+              <button class="node-info-trigger" type="button" aria-expanded="false" aria-controls="node-24v-pump-popover">
+                <span class="node-title">Шина 24V_PUMP</span>
+                <span class="node-req-indicator" aria-hidden="true">REQ 3</span>
+              </button>
+              <div class="node-hint" role="tooltip">Отдельная линия 24 В, питающая только насос.</div>
+              <div class="node-popover" id="node-24v-pump-popover" role="dialog" aria-label="Шина 24V_PUMP — подробности">
+                <div class="node-popover-header">
+                  <span>Шина 24V_PUMP</span>
+                  <span class="node-popover-tag">Шина питания</span>
+                </div>
+                <details class="node-accordion" open>
+                  <summary>Что это</summary>
+                  <p>Выделенная линия питания 24 В для распределения энергии на насос.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Где находится в стенде</summary>
+                  <p>В жгуте питания внутри корпуса и на клеммах насоса.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Требования (обязательные)</summary>
+                  <ul class="node-req-list">
+                    <li>Маркировка 24V_PUMP обязательна.</li>
+                    <li>Сечение проводов должно соответствовать току 2–4 А.</li>
+                    <li>Запрещено подключать посторонние нагрузки.</li>
+                  </ul>
+                </details>
+                <details class="node-accordion">
+                  <summary>Почему это важно</summary>
+                  <p>Неверная маркировка и перегрузка ветви приводят к перегреву и ошибкам обслуживания.</p>
+                </details>
               </div>
             </div>
             <div class="flow-arrow vertical">↓</div>
-            <div class="diagram-node info-tooltip">
-              Насос 24 В
-              <div class="node-tooltip">
-                <div class="tooltip-title">Что это</div>
-                <div class="tooltip-text">Электродвигатель, создающий циркуляцию воды в контуре. Нужен для постоянного потока через стенд.</div>
-                <div class="tooltip-title">Требование</div>
-                <div class="tooltip-text">2 А ном, до 4 А пик. Защита от выбросов (TVS/flyback) обязательна.</div>
+            <div class="diagram-node node-info">
+              <button class="node-info-trigger" type="button" aria-expanded="false" aria-controls="node-pump-24-popover">
+                <span class="node-title">Насос 24 В</span>
+                <span class="node-req-indicator" aria-hidden="true">REQ 3</span>
+              </button>
+              <div class="node-hint" role="tooltip">Насос обеспечивает циркуляцию воды в системе.</div>
+              <div class="node-popover" id="node-pump-24-popover" role="dialog" aria-label="Насос 24 В — подробности">
+                <div class="node-popover-header">
+                  <span>Насос 24 В</span>
+                  <span class="node-popover-tag">Нагрузка</span>
+                </div>
+                <details class="node-accordion" open>
+                  <summary>Что это</summary>
+                  <p>Электродвигатель, создающий циркуляцию воды в контуре стенда.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Где находится в стенде</summary>
+                  <p>В гидравлическом контуре внутри корпуса стенда.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Требования (обязательные)</summary>
+                  <ul class="node-req-list">
+                    <li>Должен работать от 24 В, 2 А номинально, до 4 А пиково.</li>
+                    <li>Необходима защита от выбросов TVS/flyback рядом с насосом.</li>
+                    <li>Необходимо отключение через силовой ключ.</li>
+                  </ul>
+                </details>
+                <details class="node-accordion">
+                  <summary>Почему это важно</summary>
+                  <p>Индуктивные выбросы без защиты повреждают ключи и вызывают отказ насоса.</p>
+                </details>
               </div>
             </div>
           </div>
           <div class="power-branch">
             <div class="power-branch-title">Ветвь DC/DC Buck</div>
-            <div class="diagram-node info-tooltip">
-              DC/DC Buck 12→5 В
-              <div class="node-tooltip">
-                <div class="tooltip-title">Что это</div>
-                <div class="tooltip-text">Понижающий преобразователь, который делает 5 В для электроники. Нужен для безопасного питания микроконтроллера.</div>
-                <div class="tooltip-title">Требование</div>
-                <div class="tooltip-text">Выход 5 В, ≥3 А. Стабилизация напряжения обязательна.</div>
+            <div class="diagram-node node-info">
+              <button class="node-info-trigger" type="button" aria-expanded="false" aria-controls="node-buck-popover">
+                <span class="node-title">DC/DC Buck 12→5 В</span>
+                <span class="node-req-indicator" aria-hidden="true">REQ 3</span>
+              </button>
+              <div class="node-hint" role="tooltip">Понижает 12 В до 5 В для логики.</div>
+              <div class="node-popover" id="node-buck-popover" role="dialog" aria-label="DC/DC Buck 12→5 В — подробности">
+                <div class="node-popover-header">
+                  <span>DC/DC Buck 12→5 В</span>
+                  <span class="node-popover-tag">Преобразователь</span>
+                </div>
+                <details class="node-accordion" open>
+                  <summary>Что это</summary>
+                  <p>Понижающий преобразователь, который питает электронику стабилизированным 5 В.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Где находится в стенде</summary>
+                  <p>Внутри корпуса, рядом с платой управления и линией 5V_CTRL.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Требования (обязательные)</summary>
+                  <ul class="node-req-list">
+                    <li>Должен выдавать 5 В при токе ≥3 А.</li>
+                    <li>Необходима стабилизация без просадок при пиках нагрузки.</li>
+                    <li>Запрещено питание логики напрямую от 12 В.</li>
+                  </ul>
+                </details>
+                <details class="node-accordion">
+                  <summary>Почему это важно</summary>
+                  <p>Просадки 5 В вызывают перезагрузки контроллера и потерю данных.</p>
+                </details>
               </div>
             </div>
             <div class="flow-arrow vertical">↓</div>
-            <div class="diagram-node info-tooltip">
-              Шина 5V_CTRL
-              <div class="node-tooltip">
-                <div class="tooltip-title">Что это</div>
-                <div class="tooltip-text">Отдельная линия питания логики. Нужна для стабильного питания контроллера и датчиков.</div>
-                <div class="tooltip-title">Требование</div>
-                <div class="tooltip-text">Маркировка 5V_CTRL обязательна. Отделение от силовых линий обязательно.</div>
+            <div class="diagram-node node-info">
+              <button class="node-info-trigger" type="button" aria-expanded="false" aria-controls="node-5v-ctrl-popover">
+                <span class="node-title">Шина 5V_CTRL</span>
+                <span class="node-req-indicator" aria-hidden="true">REQ 3</span>
+              </button>
+              <div class="node-hint" role="tooltip">Линия 5 В для контроллера и датчиков.</div>
+              <div class="node-popover" id="node-5v-ctrl-popover" role="dialog" aria-label="Шина 5V_CTRL — подробности">
+                <div class="node-popover-header">
+                  <span>Шина 5V_CTRL</span>
+                  <span class="node-popover-tag">Шина питания</span>
+                </div>
+                <details class="node-accordion" open>
+                  <summary>Что это</summary>
+                  <p>Выделенная линия питания логики, которая питает контроллер и датчики.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Где находится в стенде</summary>
+                  <p>На плате управления и в соответствующем жгуте логики.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Требования (обязательные)</summary>
+                  <ul class="node-req-list">
+                    <li>Маркировка 5V_CTRL обязательна.</li>
+                    <li>Необходимо физическое отделение от силовых линий.</li>
+                    <li>Должен быть общий GND с платой управления.</li>
+                  </ul>
+                </details>
+                <details class="node-accordion">
+                  <summary>Почему это важно</summary>
+                  <p>Смешение с силовыми линиями усиливает помехи и нарушает работу датчиков.</p>
+                </details>
               </div>
             </div>
             <div class="flow-arrow vertical">↓</div>
-            <div class="diagram-node info-tooltip">
-              ESP32 + датчики
-              <div class="node-tooltip">
-                <div class="tooltip-title">Что это</div>
-                <div class="tooltip-text">Контроллер и датчики, управляющие стендом и считывающие параметры. Нужны для управления и контроля процессов.</div>
-                <div class="tooltip-title">Требование</div>
-                <div class="tooltip-text">Питание 5 В с запасом по току для пиков Wi‑Fi. Просадки напряжения запрещены.</div>
+            <div class="diagram-node node-info">
+              <button class="node-info-trigger" type="button" aria-expanded="false" aria-controls="node-esp32-popover">
+                <span class="node-title">ESP32 + датчики</span>
+                <span class="node-req-indicator" aria-hidden="true">REQ 3</span>
+              </button>
+              <div class="node-hint" role="tooltip">Контроллер и датчики, которые управляют стендом.</div>
+              <div class="node-popover" id="node-esp32-popover" role="dialog" aria-label="ESP32 + датчики — подробности">
+                <div class="node-popover-header">
+                  <span>ESP32 + датчики</span>
+                  <span class="node-popover-tag">Управление</span>
+                </div>
+                <details class="node-accordion" open>
+                  <summary>Что это</summary>
+                  <p>Плата управления на ESP32 с датчиками, отвечающая за контроль и логику работы стенда.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Где находится в стенде</summary>
+                  <p>На плате управления внутри корпуса, в отдельном отсеке электроники.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Требования (обязательные)</summary>
+                  <ul class="node-req-list">
+                    <li>Должно быть питание 5 В с запасом по току для пиков Wi‑Fi.</li>
+                    <li>Необходимы локальные конденсаторы развязки питания.</li>
+                    <li>Запрещены просадки ниже 4.8 В.</li>
+                  </ul>
+                </details>
+                <details class="node-accordion">
+                  <summary>Почему это важно</summary>
+                  <p>Нестабильное питание приводит к сбоям связи и перезапускам контроллера.</p>
+                </details>
               </div>
             </div>
           </div>
@@ -144,13 +393,37 @@
       </div>
 
       <div class="power-estop">
-        <div class="diagram-node info-tooltip">
-          E-Stop (аппаратный аварийный разрыв)
-          <div class="node-tooltip">
-            <div class="tooltip-title">Что это</div>
-            <div class="tooltip-text">Аварийная кнопка, физически разрывающая питание силовых ветвей. Нужна для немедленного безопасного отключения при аварии.</div>
-            <div class="tooltip-title">Требование</div>
-            <div class="tooltip-text">Должна отключать нагреватель и насос аппаратно. Программное отключение не заменяет E-Stop.</div>
+        <div class="diagram-node node-info">
+          <button class="node-info-trigger" type="button" aria-expanded="false" aria-controls="node-estop-popover">
+            <span class="node-title">E-Stop (аппаратный аварийный разрыв)</span>
+            <span class="node-req-indicator" aria-hidden="true">REQ 3</span>
+          </button>
+          <div class="node-hint" role="tooltip">Кнопка, которая мгновенно обесточивает силовые ветви.</div>
+          <div class="node-popover" id="node-estop-popover" role="dialog" aria-label="E-Stop — подробности">
+            <div class="node-popover-header">
+              <span>E-Stop (аппаратный аварийный разрыв)</span>
+              <span class="node-popover-tag">Безопасность</span>
+            </div>
+            <details class="node-accordion" open>
+              <summary>Что это</summary>
+              <p>Аппаратная аварийная кнопка, разрывающая питание силовых ветвей независимо от контроллера.</p>
+            </details>
+            <details class="node-accordion">
+              <summary>Где находится в стенде</summary>
+              <p>На лицевой панели стенда или в зоне доступа оператора, подключена в силовую цепь.</p>
+            </details>
+            <details class="node-accordion">
+              <summary>Требования (обязательные)</summary>
+              <ul class="node-req-list">
+                <li>Должна аппаратно отключать нагреватель и насос.</li>
+                <li>Необходимо, чтобы разрыв работал при сбое прошивки.</li>
+                <li>Запрещено заменять E-Stop программным отключением.</li>
+              </ul>
+            </details>
+            <details class="node-accordion">
+              <summary>Почему это важно</summary>
+              <p>Аппаратное отключение обеспечивает безопасную остановку даже при сбоях логики.</p>
+            </details>
           </div>
         </div>
         <p class="scheme-note">E-Stop должен обесточивать силовые ветви независимо от состояния прошивки и управляющей логики.</p>
@@ -170,50 +443,146 @@
       <p class="note">Защиты строятся селективно, чтобы авария в одной ветви не отключала всю систему.</p>
 
       <div class="power-flow">
-        <div class="diagram-node info-tooltip">
-          Ввод 12 В: 20–25 А
-          <div class="node-tooltip">
-            <div class="tooltip-title">Что это</div>
-            <div class="tooltip-text">Вводной предохранитель/автомат на линии 12 В. Нужен для защиты общего источника питания при перегрузке.</div>
-            <div class="tooltip-title">Требование</div>
-            <div class="tooltip-text">Номинал 20–25 А, отключение при перегрузке или КЗ обязательно.</div>
+        <div class="diagram-node node-info">
+          <button class="node-info-trigger" type="button" aria-expanded="false" aria-controls="node-main-fuse-popover">
+            <span class="node-title">Ввод 12 В: 20–25 А</span>
+            <span class="node-req-indicator" aria-hidden="true">REQ 3</span>
+          </button>
+          <div class="node-hint" role="tooltip">Главный предохранитель/автомат для всей 12 В линии.</div>
+          <div class="node-popover" id="node-main-fuse-popover" role="dialog" aria-label="Ввод 12 В: 20–25 А — подробности">
+            <div class="node-popover-header">
+              <span>Ввод 12 В: 20–25 А</span>
+              <span class="node-popover-tag">Защита</span>
+            </div>
+            <details class="node-accordion" open>
+              <summary>Что это</summary>
+              <p>Вводной предохранитель или автомат на линии 12 В, который защищает общий источник питания.</p>
+            </details>
+            <details class="node-accordion">
+              <summary>Где находится в стенде</summary>
+              <p>В силовом отсеке сразу после выхода AC/DC блока питания.</p>
+            </details>
+            <details class="node-accordion">
+              <summary>Требования (обязательные)</summary>
+              <ul class="node-req-list">
+                <li>Должен иметь номинал 20–25 А.</li>
+                <li>Необходимо отключение при перегрузке и коротком замыкании.</li>
+                <li>Должна соблюдаться селективность по отношению к ветвям.</li>
+              </ul>
+            </details>
+            <details class="node-accordion">
+              <summary>Почему это важно</summary>
+              <p>Без вводной защиты авария в одной ветви может вывести из строя весь блок питания.</p>
+            </details>
           </div>
         </div>
         <div class="flow-arrow">→</div>
         <div class="power-branch-grid">
           <div class="power-branch">
             <div class="power-branch-title">Нагреватель</div>
-            <div class="diagram-node info-tooltip">
-              Ветвь нагревателя: 10–15 А
-              <div class="node-tooltip">
-                <div class="tooltip-title">Что это</div>
-                <div class="tooltip-text">Отдельный предохранитель для ветви 12V_PWR. Нужен для локализации аварий в нагревателе.</div>
-                <div class="tooltip-title">Требование</div>
-                <div class="tooltip-text">Номинал 10–15 А. Селективность с вводом обязательна.</div>
+            <div class="diagram-node node-info">
+              <button class="node-info-trigger" type="button" aria-expanded="false" aria-controls="node-heater-fuse-popover">
+                <span class="node-title">Ветвь нагревателя: 10–15 А</span>
+                <span class="node-req-indicator" aria-hidden="true">REQ 3</span>
+              </button>
+              <div class="node-hint" role="tooltip">Локальная защита ветви нагревателя.</div>
+              <div class="node-popover" id="node-heater-fuse-popover" role="dialog" aria-label="Ветвь нагревателя: 10–15 А — подробности">
+                <div class="node-popover-header">
+                  <span>Ветвь нагревателя: 10–15 А</span>
+                  <span class="node-popover-tag">Предохранитель</span>
+                </div>
+                <details class="node-accordion" open>
+                  <summary>Что это</summary>
+                  <p>Отдельный предохранитель для ветви 12V_PWR, который локализует аварии нагревателя.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Где находится в стенде</summary>
+                  <p>В силовом отсеке на линии питания нагревателя.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Требования (обязательные)</summary>
+                  <ul class="node-req-list">
+                    <li>Должен иметь номинал 10–15 А.</li>
+                    <li>Необходимо соблюдение селективности с вводом 12 В.</li>
+                    <li>Запрещено объединять с другими ветвями без защиты.</li>
+                  </ul>
+                </details>
+                <details class="node-accordion">
+                  <summary>Почему это важно</summary>
+                  <p>Локальная защита предотвращает отключение всего стенда при проблемах нагревателя.</p>
+                </details>
               </div>
             </div>
           </div>
           <div class="power-branch">
             <div class="power-branch-title">Boost (вход 12 В)</div>
-            <div class="diagram-node info-tooltip">
-              Ветвь Boost: ~10 А
-              <div class="node-tooltip">
-                <div class="tooltip-title">Что это</div>
-                <div class="tooltip-text">Ограничение тока для входа повышающего преобразователя. Нужно для защиты общего 12 В ввода.</div>
-                <div class="tooltip-title">Требование</div>
-                <div class="tooltip-text">Ограничение ~10 А, селективность с вводным автоматом обязательна.</div>
+            <div class="diagram-node node-info">
+              <button class="node-info-trigger" type="button" aria-expanded="false" aria-controls="node-boost-fuse-popover">
+                <span class="node-title">Ветвь Boost: ~10 А</span>
+                <span class="node-req-indicator" aria-hidden="true">REQ 3</span>
+              </button>
+              <div class="node-hint" role="tooltip">Ограничение тока на входе Boost.</div>
+              <div class="node-popover" id="node-boost-fuse-popover" role="dialog" aria-label="Ветвь Boost: ~10 А — подробности">
+                <div class="node-popover-header">
+                  <span>Ветвь Boost: ~10 А</span>
+                  <span class="node-popover-tag">Предохранитель</span>
+                </div>
+                <details class="node-accordion" open>
+                  <summary>Что это</summary>
+                  <p>Ограничение тока для входа повышающего преобразователя, защищающее общий ввод 12 В.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Где находится в стенде</summary>
+                  <p>Внутри корпуса на входе DC/DC Boost.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Требования (обязательные)</summary>
+                  <ul class="node-req-list">
+                    <li>Должно ограничивать ток примерно на уровне 10 А.</li>
+                    <li>Необходимо соблюдение селективности с вводной защитой.</li>
+                    <li>Запрещено отключать защиту ради повышения мощности.</li>
+                  </ul>
+                </details>
+                <details class="node-accordion">
+                  <summary>Почему это важно</summary>
+                  <p>Без ограничения входной ток Boost может перегрузить общий блок питания.</p>
+                </details>
               </div>
             </div>
           </div>
           <div class="power-branch">
             <div class="power-branch-title">Логика 5 В</div>
-            <div class="diagram-node info-tooltip">
-              Ветвь 5 В: 2–3 А
-              <div class="node-tooltip">
-                <div class="tooltip-title">Что это</div>
-                <div class="tooltip-text">Предохранитель для линии 5V_CTRL. Нужен для защиты электроники от короткого замыкания.</div>
-                <div class="tooltip-title">Требование</div>
-                <div class="tooltip-text">Номинал 2–3 А. Селективность с вводом обязательна.</div>
+            <div class="diagram-node node-info">
+              <button class="node-info-trigger" type="button" aria-expanded="false" aria-controls="node-5v-fuse-popover">
+                <span class="node-title">Ветвь 5 В: 2–3 А</span>
+                <span class="node-req-indicator" aria-hidden="true">REQ 3</span>
+              </button>
+              <div class="node-hint" role="tooltip">Предохранитель для линии 5V_CTRL.</div>
+              <div class="node-popover" id="node-5v-fuse-popover" role="dialog" aria-label="Ветвь 5 В: 2–3 А — подробности">
+                <div class="node-popover-header">
+                  <span>Ветвь 5 В: 2–3 А</span>
+                  <span class="node-popover-tag">Предохранитель</span>
+                </div>
+                <details class="node-accordion" open>
+                  <summary>Что это</summary>
+                  <p>Предохранитель для линии 5V_CTRL, защищающий электронику от коротких замыканий.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Где находится в стенде</summary>
+                  <p>На выходе DC/DC Buck, перед платой управления.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Требования (обязательные)</summary>
+                  <ul class="node-req-list">
+                    <li>Должен иметь номинал 2–3 А.</li>
+                    <li>Необходимо соблюдение селективности с вводом 12 В.</li>
+                    <li>Запрещено объединять с силовыми ветвями.</li>
+                  </ul>
+                </details>
+                <details class="node-accordion">
+                  <summary>Почему это важно</summary>
+                  <p>Локальная защита защищает электронику и облегчает диагностику аварий.</p>
+                </details>
               </div>
             </div>
           </div>
@@ -221,40 +590,132 @@
       </div>
 
       <div class="power-protection-notes">
-        <div class="power-protection-card info-tooltip">
-          TVS на 12 В и 24 В
-          <div class="node-tooltip">
-            <div class="tooltip-title">Что это</div>
-            <div class="tooltip-text">TVS — защитный диод, который гасит короткие всплески напряжения. Нужен для защиты питания от перенапряжений.</div>
-            <div class="tooltip-title">Требование</div>
-            <div class="tooltip-text">TVS должен быть установлен на шинах 12 В и 24 В.</div>
+        <div class="power-protection-card node-info">
+          <button class="node-info-trigger" type="button" aria-expanded="false" aria-controls="node-tvs-bus-popover">
+            <span class="node-title">TVS на 12 В и 24 В</span>
+            <span class="node-req-indicator" aria-hidden="true">REQ 2</span>
+          </button>
+          <div class="node-hint" role="tooltip">Защитные диоды для гашения всплесков напряжения.</div>
+          <div class="node-popover" id="node-tvs-bus-popover" role="dialog" aria-label="TVS на 12 В и 24 В — подробности">
+            <div class="node-popover-header">
+              <span>TVS на 12 В и 24 В</span>
+              <span class="node-popover-tag">Защита</span>
+            </div>
+            <details class="node-accordion" open>
+              <summary>Что это</summary>
+              <p>TVS-диоды гасят короткие всплески напряжения на шинах питания.</p>
+            </details>
+            <details class="node-accordion">
+              <summary>Где находится в стенде</summary>
+              <p>На шинах 12 V и 24 V рядом с силовыми разветвлениями внутри корпуса.</p>
+            </details>
+            <details class="node-accordion">
+              <summary>Требования (обязательные)</summary>
+              <ul class="node-req-list">
+                <li>TVS должен быть установлен на шинах 12 В и 24 В.</li>
+                <li>Необходимо выбирать TVS по рабочему напряжению шины.</li>
+              </ul>
+            </details>
+            <details class="node-accordion">
+              <summary>Почему это важно</summary>
+              <p>Без TVS всплески напряжения повреждают электронику и силовые ключи.</p>
+            </details>
           </div>
         </div>
-        <div class="power-protection-card info-tooltip">
-          PE/заземление корпуса
-          <div class="node-tooltip">
-            <div class="tooltip-title">Что это</div>
-            <div class="tooltip-text">Защитный проводник, соединяющий металлический корпус с землёй. Нужен для безопасности при пробое изоляции.</div>
-            <div class="tooltip-title">Требование</div>
-            <div class="tooltip-text">PE должен быть подключён к корпусу при БП класса I. Отсутствие PE запрещено.</div>
+        <div class="power-protection-card node-info">
+          <button class="node-info-trigger" type="button" aria-expanded="false" aria-controls="node-pe-popover">
+            <span class="node-title">PE/заземление корпуса</span>
+            <span class="node-req-indicator" aria-hidden="true">REQ 2</span>
+          </button>
+          <div class="node-hint" role="tooltip">Защитное заземление корпуса для безопасности.</div>
+          <div class="node-popover" id="node-pe-popover" role="dialog" aria-label="PE/заземление корпуса — подробности">
+            <div class="node-popover-header">
+              <span>PE/заземление корпуса</span>
+              <span class="node-popover-tag">Безопасность</span>
+            </div>
+            <details class="node-accordion" open>
+              <summary>Что это</summary>
+              <p>Защитный проводник, соединяющий металлический корпус стенда с землёй.</p>
+            </details>
+            <details class="node-accordion">
+              <summary>Где находится в стенде</summary>
+              <p>Точка подключения PE на корпусе и на клеммнике сетевого ввода.</p>
+            </details>
+            <details class="node-accordion">
+              <summary>Требования (обязательные)</summary>
+              <ul class="node-req-list">
+                <li>PE должен быть подключён к корпусу при БП класса I.</li>
+                <li>Отсутствие PE запрещено.</li>
+              </ul>
+            </details>
+            <details class="node-accordion">
+              <summary>Почему это важно</summary>
+              <p>Заземление снижает риск поражения током при пробое изоляции.</p>
+            </details>
           </div>
         </div>
-        <div class="power-protection-card info-tooltip">
-          EMI-фильтр на входе
-          <div class="node-tooltip">
-            <div class="tooltip-title">Что это</div>
-            <div class="tooltip-text">Фильтр, снижающий помехи от силовых цепей в сеть и в электронику. Нужен для устойчивой работы и соответствия нормам помех.</div>
-            <div class="tooltip-title">Требование</div>
-            <div class="tooltip-text">EMI-фильтр должен быть предусмотрен на входе 230 В.</div>
+        <div class="power-protection-card node-info">
+          <button class="node-info-trigger" type="button" aria-expanded="false" aria-controls="node-emi-popover">
+            <span class="node-title">EMI-фильтр на входе</span>
+            <span class="node-req-indicator" aria-hidden="true">REQ 2</span>
+          </button>
+          <div class="node-hint" role="tooltip">Фильтр, который снижает помехи от силовой части.</div>
+          <div class="node-popover" id="node-emi-popover" role="dialog" aria-label="EMI-фильтр на входе — подробности">
+            <div class="node-popover-header">
+              <span>EMI-фильтр на входе</span>
+              <span class="node-popover-tag">Фильтр</span>
+            </div>
+            <details class="node-accordion" open>
+              <summary>Что это</summary>
+              <p>Фильтр электромагнитных помех, который не выпускает шумы из силовой части в сеть.</p>
+            </details>
+            <details class="node-accordion">
+              <summary>Где находится в стенде</summary>
+              <p>На входе 230 В, перед AC/DC блоком питания.</p>
+            </details>
+            <details class="node-accordion">
+              <summary>Требования (обязательные)</summary>
+              <ul class="node-req-list">
+                <li>EMI-фильтр должен быть установлен на входе 230 В.</li>
+                <li>Запрещено обходить фильтр при обслуживании.</li>
+              </ul>
+            </details>
+            <details class="node-accordion">
+              <summary>Почему это важно</summary>
+              <p>Без фильтра помехи ухудшают работу электроники и качество питания.</p>
+            </details>
           </div>
         </div>
-        <div class="power-protection-card info-tooltip">
-          E-Stop: разрыв силовых ветвей
-          <div class="node-tooltip">
-            <div class="tooltip-title">Что это</div>
-            <div class="tooltip-text">Аппаратное отключение питания нагревателя и насоса одной кнопкой. Нужен для безопасной остановки при аварии.</div>
-            <div class="tooltip-title">Требование</div>
-            <div class="tooltip-text">E-Stop должен разрывать силовые ветви, а не только сигнал управления.</div>
+        <div class="power-protection-card node-info">
+          <button class="node-info-trigger" type="button" aria-expanded="false" aria-controls="node-estop-branch-popover">
+            <span class="node-title">E-Stop: разрыв силовых ветвей</span>
+            <span class="node-req-indicator" aria-hidden="true">REQ 2</span>
+          </button>
+          <div class="node-hint" role="tooltip">Аппаратная кнопка аварийного отключения ветвей.</div>
+          <div class="node-popover" id="node-estop-branch-popover" role="dialog" aria-label="E-Stop: разрыв силовых ветвей — подробности">
+            <div class="node-popover-header">
+              <span>E-Stop: разрыв силовых ветвей</span>
+              <span class="node-popover-tag">Безопасность</span>
+            </div>
+            <details class="node-accordion" open>
+              <summary>Что это</summary>
+              <p>Аппаратное отключение питания нагревателя и насоса одной кнопкой.</p>
+            </details>
+            <details class="node-accordion">
+              <summary>Где находится в стенде</summary>
+              <p>На панели оператора, электрически включён в силовую цепь.</p>
+            </details>
+            <details class="node-accordion">
+              <summary>Требования (обязательные)</summary>
+              <ul class="node-req-list">
+                <li>E-Stop должен разрывать силовые ветви, а не только сигнал управления.</li>
+                <li>Необходимо подтверждение аппаратного разрыва при проверках.</li>
+              </ul>
+            </details>
+            <details class="node-accordion">
+              <summary>Почему это важно</summary>
+              <p>Аппаратный разрыв гарантирует безопасную остановку при аварийной ситуации.</p>
+            </details>
           </div>
         </div>
       </div>
@@ -276,44 +737,137 @@
         <div class="power-control-card">
           <h3>Нагреватель: MOSFET-ключ + PWM (ШИМ)</h3>
           <div class="power-chip-row">
-            <div class="power-protection-card info-tooltip">
-              PWM/ШИМ
-              <div class="node-tooltip">
-                <div class="tooltip-title">Что это</div>
-                <div class="tooltip-text">Быстрое включение и выключение сигнала. Нужен для плавной регулировки мощности без перегрева.</div>
-                <div class="tooltip-title">Требование</div>
-                <div class="tooltip-text">PWM/ШИМ должен применяться для управления нагревателем.</div>
+            <div class="power-protection-card node-info">
+              <button class="node-info-trigger" type="button" aria-expanded="false" aria-controls="node-pwm-popover">
+                <span class="node-title">PWM/ШИМ</span>
+                <span class="node-req-indicator" aria-hidden="true">REQ 2</span>
+              </button>
+              <div class="node-hint" role="tooltip">Метод управления мощностью нагревателя.</div>
+              <div class="node-popover" id="node-pwm-popover" role="dialog" aria-label="PWM/ШИМ — подробности">
+                <div class="node-popover-header">
+                  <span>PWM/ШИМ</span>
+                  <span class="node-popover-tag">Управление</span>
+                </div>
+                <details class="node-accordion" open>
+                  <summary>Что это</summary>
+                  <p>Быстрое включение и выключение сигнала, позволяющее точно регулировать среднюю мощность.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Где находится в стенде</summary>
+                  <p>В программной логике ESP32 и в силовом ключе нагревателя.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Требования (обязательные)</summary>
+                  <ul class="node-req-list">
+                    <li>PWM/ШИМ должен применяться для управления нагревателем.</li>
+                    <li>Необходимо обеспечивать стабильную частоту и скважность.</li>
+                  </ul>
+                </details>
+                <details class="node-accordion">
+                  <summary>Почему это важно</summary>
+                  <p>Без ШИМ нагрев становится резким, что приводит к перегревам и нестабильности температуры.</p>
+                </details>
               </div>
             </div>
           </div>
           <div class="power-flow">
-            <div class="diagram-node info-tooltip">
-              ESP32
-              <div class="node-tooltip">
-                <div class="tooltip-title">Что это</div>
-                <div class="tooltip-text">Микроконтроллер, который управляет мощностью нагревателя. Нужен для формирования управляющего PWM сигнала.</div>
-                <div class="tooltip-title">Требование</div>
-                <div class="tooltip-text">Выдаёт PWM/ШИМ сигнал для регулирования мощности нагрева.</div>
+            <div class="diagram-node node-info">
+              <button class="node-info-trigger" type="button" aria-expanded="false" aria-controls="node-esp32-heater-popover">
+                <span class="node-title">ESP32</span>
+                <span class="node-req-indicator" aria-hidden="true">REQ 2</span>
+              </button>
+              <div class="node-hint" role="tooltip">Контроллер, формирующий PWM для нагревателя.</div>
+              <div class="node-popover" id="node-esp32-heater-popover" role="dialog" aria-label="ESP32 (нагреватель) — подробности">
+                <div class="node-popover-header">
+                  <span>ESP32</span>
+                  <span class="node-popover-tag">Контроллер</span>
+                </div>
+                <details class="node-accordion" open>
+                  <summary>Что это</summary>
+                  <p>Микроконтроллер, формирующий управляющий PWM/ШИМ сигнал для нагревателя.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Где находится в стенде</summary>
+                  <p>На плате управления внутри корпуса стенда.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Требования (обязательные)</summary>
+                  <ul class="node-req-list">
+                    <li>Должен выдавать PWM/ШИМ сигнал для регулирования мощности нагрева.</li>
+                    <li>Необходимо обеспечивать стабильную частоту PWM.</li>
+                  </ul>
+                </details>
+                <details class="node-accordion">
+                  <summary>Почему это важно</summary>
+                  <p>Нестабильный сигнал PWM ведёт к неуправляемому нагреву.</p>
+                </details>
               </div>
             </div>
             <div class="flow-arrow">→</div>
-            <div class="diagram-node info-tooltip">
-              MOSFET-ключ
-              <div class="node-tooltip">
-                <div class="tooltip-title">Что это</div>
-                <div class="tooltip-text">Электронный выключатель, который быстро включает и выключает ток. Нужен для точного управления мощностью.</div>
-                <div class="tooltip-title">Требование</div>
-                <div class="tooltip-text">Vds ≥ 40–60 В, токовый запас 3–5×, тепловой отвод обязателен.</div>
+            <div class="diagram-node node-info">
+              <button class="node-info-trigger" type="button" aria-expanded="false" aria-controls="node-mosfet-heater-popover">
+                <span class="node-title">MOSFET-ключ</span>
+                <span class="node-req-indicator" aria-hidden="true">REQ 3</span>
+              </button>
+              <div class="node-hint" role="tooltip">Силовой ключ для управления нагревателем.</div>
+              <div class="node-popover" id="node-mosfet-heater-popover" role="dialog" aria-label="MOSFET-ключ (нагреватель) — подробности">
+                <div class="node-popover-header">
+                  <span>MOSFET-ключ</span>
+                  <span class="node-popover-tag">Силовой ключ</span>
+                </div>
+                <details class="node-accordion" open>
+                  <summary>Что это</summary>
+                  <p>Электронный выключатель, который быстро коммутирует ток нагревателя по сигналу PWM.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Где находится в стенде</summary>
+                  <p>На силовой плате или отдельном модуле управления нагревателем.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Требования (обязательные)</summary>
+                  <ul class="node-req-list">
+                    <li>Vds должно быть ≥ 40–60 В.</li>
+                    <li>Токовый запас должен быть 3–5× от рабочего.</li>
+                    <li>Тепловой отвод обязателен.</li>
+                  </ul>
+                </details>
+                <details class="node-accordion">
+                  <summary>Почему это важно</summary>
+                  <p>Недостаточный запас по Vds и охлаждению приводит к пробою MOSFET.</p>
+                </details>
               </div>
             </div>
             <div class="flow-arrow">→</div>
-            <div class="diagram-node info-tooltip">
-              Нагреватель 12 В
-              <div class="node-tooltip">
-                <div class="tooltip-title">Что это</div>
-                <div class="tooltip-text">Тепловая нагрузка стенда, требующая плавной регулировки мощности. Нужна для нагрева воды по заданному режиму.</div>
-                <div class="tooltip-title">Требование</div>
-                <div class="tooltip-text">PWM/ШИМ обязателен. Предохранитель 10–15 А обязателен.</div>
+            <div class="diagram-node node-info">
+              <button class="node-info-trigger" type="button" aria-expanded="false" aria-controls="node-heater-12-control-popover">
+                <span class="node-title">Нагреватель 12 В</span>
+                <span class="node-req-indicator" aria-hidden="true">REQ 2</span>
+              </button>
+              <div class="node-hint" role="tooltip">Тепловая нагрузка, управляемая через PWM.</div>
+              <div class="node-popover" id="node-heater-12-control-popover" role="dialog" aria-label="Нагреватель 12 В — управление">
+                <div class="node-popover-header">
+                  <span>Нагреватель 12 В</span>
+                  <span class="node-popover-tag">Нагрузка</span>
+                </div>
+                <details class="node-accordion" open>
+                  <summary>Что это</summary>
+                  <p>Тепловая нагрузка стенда, требующая плавной регулировки мощности.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Где находится в стенде</summary>
+                  <p>В силовой ветви 12V_PWR, в гидравлическом контуре.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Требования (обязательные)</summary>
+                  <ul class="node-req-list">
+                    <li>PWM/ШИМ обязателен для регулирования мощности.</li>
+                    <li>Предохранитель 10–15 А обязателен.</li>
+                  </ul>
+                </details>
+                <details class="node-accordion">
+                  <summary>Почему это важно</summary>
+                  <p>Без ШИМ нагрев получается нестабильным и перегревает систему.</p>
+                </details>
               </div>
             </div>
           </div>
@@ -323,42 +877,135 @@
         <div class="power-control-card">
           <h3>Насос 24 В: включение/выключение</h3>
           <div class="power-flow">
-            <div class="diagram-node info-tooltip">
-              ESP32
-              <div class="node-tooltip">
-                <div class="tooltip-title">Что это</div>
-                <div class="tooltip-text">Контроллер включает и отключает насос по условиям работы стенда. Нужен для поддержания циркуляции.</div>
-                <div class="tooltip-title">Требование</div>
-                <div class="tooltip-text">Логика ON/OFF обязательна, управление через силовой ключ.</div>
+            <div class="diagram-node node-info">
+              <button class="node-info-trigger" type="button" aria-expanded="false" aria-controls="node-esp32-pump-popover">
+                <span class="node-title">ESP32</span>
+                <span class="node-req-indicator" aria-hidden="true">REQ 2</span>
+              </button>
+              <div class="node-hint" role="tooltip">Контроллер, который включает и отключает насос.</div>
+              <div class="node-popover" id="node-esp32-pump-popover" role="dialog" aria-label="ESP32 (насос) — подробности">
+                <div class="node-popover-header">
+                  <span>ESP32</span>
+                  <span class="node-popover-tag">Контроллер</span>
+                </div>
+                <details class="node-accordion" open>
+                  <summary>Что это</summary>
+                  <p>Контроллер, который включает и отключает насос по условиям работы стенда.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Где находится в стенде</summary>
+                  <p>На плате управления внутри корпуса.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Требования (обязательные)</summary>
+                  <ul class="node-req-list">
+                    <li>Логика ON/OFF обязательна.</li>
+                    <li>Управление должно идти через силовой ключ.</li>
+                  </ul>
+                </details>
+                <details class="node-accordion">
+                  <summary>Почему это важно</summary>
+                  <p>Неправильное управление насосом приводит к перегрузкам и сбоям циркуляции.</p>
+                </details>
               </div>
             </div>
             <div class="flow-arrow">→</div>
-            <div class="diagram-node info-tooltip">
-              MOSFET-ключ
-              <div class="node-tooltip">
-                <div class="tooltip-title">Что это</div>
-                <div class="tooltip-text">Электронный выключатель для питания насоса. Нужен для надёжной коммутации нагрузки.</div>
-                <div class="tooltip-title">Требование</div>
-                <div class="tooltip-text">Vds ≥ 60 В, токовый запас 3–5×. Тепловой отвод обязателен.</div>
+            <div class="diagram-node node-info">
+              <button class="node-info-trigger" type="button" aria-expanded="false" aria-controls="node-mosfet-pump-popover">
+                <span class="node-title">MOSFET-ключ</span>
+                <span class="node-req-indicator" aria-hidden="true">REQ 3</span>
+              </button>
+              <div class="node-hint" role="tooltip">Силовой ключ для коммутации насоса.</div>
+              <div class="node-popover" id="node-mosfet-pump-popover" role="dialog" aria-label="MOSFET-ключ (насос) — подробности">
+                <div class="node-popover-header">
+                  <span>MOSFET-ключ</span>
+                  <span class="node-popover-tag">Силовой ключ</span>
+                </div>
+                <details class="node-accordion" open>
+                  <summary>Что это</summary>
+                  <p>Электронный ключ, который надёжно коммутирует питание насоса.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Где находится в стенде</summary>
+                  <p>На силовой плате управления насосом внутри корпуса.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Требования (обязательные)</summary>
+                  <ul class="node-req-list">
+                    <li>Vds должно быть ≥ 60 В.</li>
+                    <li>Токовый запас должен быть 3–5× от рабочего.</li>
+                    <li>Тепловой отвод обязателен.</li>
+                  </ul>
+                </details>
+                <details class="node-accordion">
+                  <summary>Почему это важно</summary>
+                  <p>Недостаточный запас по напряжению и охлаждению приводит к пробою ключа.</p>
+                </details>
               </div>
             </div>
             <div class="flow-arrow">→</div>
-            <div class="diagram-node info-tooltip">
-              Насос 24 В
-              <div class="node-tooltip">
-                <div class="tooltip-title">Что это</div>
-                <div class="tooltip-text">Двигатель для циркуляции воды. Нужен для движения воды через стенд.</div>
-                <div class="tooltip-title">Требование</div>
-                <div class="tooltip-text">Номинал 2 А, пик до 4 А. Защита от выбросов обязательна.</div>
+            <div class="diagram-node node-info">
+              <button class="node-info-trigger" type="button" aria-expanded="false" aria-controls="node-pump-24-control-popover">
+                <span class="node-title">Насос 24 В</span>
+                <span class="node-req-indicator" aria-hidden="true">REQ 2</span>
+              </button>
+              <div class="node-hint" role="tooltip">Насос, который обеспечивает циркуляцию воды.</div>
+              <div class="node-popover" id="node-pump-24-control-popover" role="dialog" aria-label="Насос 24 В — управление">
+                <div class="node-popover-header">
+                  <span>Насос 24 В</span>
+                  <span class="node-popover-tag">Нагрузка</span>
+                </div>
+                <details class="node-accordion" open>
+                  <summary>Что это</summary>
+                  <p>Двигатель, который обеспечивает циркуляцию воды через стенд.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Где находится в стенде</summary>
+                  <p>В гидравлическом контуре внутри корпуса.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Требования (обязательные)</summary>
+                  <ul class="node-req-list">
+                    <li>Номинал 2 А, пик до 4 А.</li>
+                    <li>Защита от выбросов обязательна.</li>
+                  </ul>
+                </details>
+                <details class="node-accordion">
+                  <summary>Почему это важно</summary>
+                  <p>Без защиты и правильного тока насос быстро выходит из строя.</p>
+                </details>
               </div>
             </div>
-            <div class="diagram-node compact info-tooltip">
-              TVS/flyback
-              <div class="node-tooltip">
-                <div class="tooltip-title">Что это</div>
-                <div class="tooltip-text">Защита от импульсных скачков напряжения, которые возникают в индуктивной нагрузке. Нужна для защиты ключа и питания.</div>
-                <div class="tooltip-title">Требование</div>
-                <div class="tooltip-text">TVS или flyback-диод должны быть установлены рядом с насосом.</div>
+            <div class="diagram-node compact node-info">
+              <button class="node-info-trigger" type="button" aria-expanded="false" aria-controls="node-flyback-popover">
+                <span class="node-title">TVS/flyback</span>
+                <span class="node-req-indicator" aria-hidden="true">REQ 2</span>
+              </button>
+              <div class="node-hint" role="tooltip">Защита от импульсных скачков в насосе.</div>
+              <div class="node-popover" id="node-flyback-popover" role="dialog" aria-label="TVS/flyback — подробности">
+                <div class="node-popover-header">
+                  <span>TVS/flyback</span>
+                  <span class="node-popover-tag">Защита</span>
+                </div>
+                <details class="node-accordion" open>
+                  <summary>Что это</summary>
+                  <p>Защита от импульсных скачков, которые возникают в индуктивной нагрузке насоса.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Где находится в стенде</summary>
+                  <p>Рядом с насосом или на его силовой линии внутри корпуса.</p>
+                </details>
+                <details class="node-accordion">
+                  <summary>Требования (обязательные)</summary>
+                  <ul class="node-req-list">
+                    <li>TVS или flyback-диод должны быть установлены рядом с насосом.</li>
+                    <li>Выбор защиты должен соответствовать напряжению 24 В.</li>
+                  </ul>
+                </details>
+                <details class="node-accordion">
+                  <summary>Почему это важно</summary>
+                  <p>Без защиты выбросы повреждают MOSFET и ухудшают надёжность питания.</p>
+                </details>
               </div>
             </div>
           </div>
@@ -419,5 +1066,57 @@
       </div>
     </section>
   </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const nodes = Array.from(document.querySelectorAll('.node-info'));
+      const closeAll = (exceptNode = null) => {
+        nodes.forEach(node => {
+          if (node === exceptNode) return;
+          node.classList.remove('open');
+          const trigger = node.querySelector('.node-info-trigger');
+          if (trigger) trigger.setAttribute('aria-expanded', 'false');
+        });
+      };
+
+      nodes.forEach(node => {
+        const trigger = node.querySelector('.node-info-trigger');
+        if (!trigger) return;
+
+        trigger.addEventListener('click', event => {
+          event.stopPropagation();
+          const isOpen = node.classList.contains('open');
+          closeAll(node);
+          if (!isOpen) {
+            node.classList.add('open');
+            trigger.setAttribute('aria-expanded', 'true');
+          } else {
+            node.classList.remove('open');
+            trigger.setAttribute('aria-expanded', 'false');
+          }
+        });
+
+        trigger.addEventListener('keydown', event => {
+          if (event.key === 'Escape') {
+            node.classList.remove('open');
+            trigger.setAttribute('aria-expanded', 'false');
+            trigger.blur();
+          }
+        });
+      });
+
+      document.addEventListener('click', event => {
+        if (!event.target.closest('.node-info')) {
+          closeAll();
+        }
+      });
+
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape') {
+          closeAll();
+        }
+      });
+    });
+  </script>
 </body>
 </html>
