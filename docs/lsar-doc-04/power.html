@@ -41,119 +41,39 @@
         </div>
       </div>
       <p class="note">Ниже приведена единственная архитектура питания стенда ЛСАР. Другие архитектуры не допускаются в рамках данного проекта.</p>
-
-      <div class="power-flow">
-        <div class="diagram-node node-ac info-tooltip">
-          Розетка 230 В AC, 50 Гц
-          <div class="node-tooltip">
-            <div class="tooltip-title">Что это</div>
-            <div class="tooltip-text">Переменное напряжение из розетки. Нужно для питания всего стенда и формирует входной уровень сети.</div>
-            <div class="tooltip-title">Требование</div>
-            <div class="tooltip-text">Диапазон 207–253 В, 50 Гц. Отклонения вне диапазона запрещены для работы стенда.</div>
+      <div class="power-layout">
+        <div class="power-diagram-panel">
+          <div class="diagram-canvas" id="powerDiagram">
+            <svg class="diagram-arrows" viewBox="0 0 100 100" preserveAspectRatio="none">
+              <defs>
+                <marker id="arrowhead" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                  <path d="M0,0 L6,3 L0,6 Z" fill="#3a6bc9"></path>
+                </marker>
+              </defs>
+            </svg>
+            <div class="diagram-nodes" id="powerDiagramNodes"></div>
+          </div>
+          <div class="power-estop">
+            <div class="diagram-node node-safety info-tooltip">
+              E-Stop (аппаратный аварийный разрыв)
+              <div class="node-tooltip">
+                <div class="tooltip-title">Что это</div>
+                <div class="tooltip-text">Аварийная кнопка, физически разрывающая питание силовых ветвей. Нужна для немедленного безопасного отключения при аварии.</div>
+                <div class="tooltip-title">Требование</div>
+                <div class="tooltip-text">Должна отключать нагреватель и насос аппаратно. Программное отключение не заменяет E-Stop.</div>
+              </div>
+            </div>
+            <p class="scheme-note">E-Stop должен обесточивать силовые ветви независимо от состояния прошивки и управляющей логики.</p>
           </div>
         </div>
-        <div class="flow-arrow">→</div>
-        <div class="diagram-node node-converter info-tooltip">
-          AC/DC источник 12 В (SELV), 20 А
-          <div class="node-tooltip">
-            <div class="tooltip-title">Что это</div>
-            <div class="tooltip-text">Блок питания, который превращает 230 В AC в безопасные 12 В DC. SELV означает «безопасное сверхнизкое напряжение» для человека и нужно для защиты пользователя.</div>
-            <div class="tooltip-title">Требование</div>
-            <div class="tooltip-text">12 В, ≥20 А (≥240 Вт). Защиты OCP/OVP/OTP/SCP обязательны.</div>
+        <aside class="card power-details-panel">
+          <div class="details-header">
+            <p class="eyebrow">Выбранный элемент</p>
+            <h3 id="detailsTitle"></h3>
+            <p class="details-subtitle" id="detailsSubtitle"></p>
           </div>
-        </div>
-        <div class="flow-arrow">→</div>
-        <div class="power-branch-grid">
-          <div class="power-branch">
-            <div class="power-branch-title">Ветвь 12V_PWR</div>
-            <div class="diagram-node node-load info-tooltip">
-              Нагреватель 12 В
-              <div class="node-tooltip">
-                <div class="tooltip-title">Что это</div>
-                <div class="tooltip-text">Нагревательный элемент, превращающий электричество в тепло. Нужен для нагрева воды в контуре.</div>
-                <div class="tooltip-title">Требование</div>
-                <div class="tooltip-text">Мощность 80–100 Вт, ток 6.7–8.3 А. MOSFET-ключ + PWM обязателен, предохранитель 10–15 А.</div>
-              </div>
-            </div>
-          </div>
-          <div class="power-branch">
-            <div class="power-branch-title">Ветвь DC/DC Boost</div>
-            <div class="diagram-node node-converter info-tooltip">
-              DC/DC Boost 12→24 В
-              <div class="node-tooltip">
-                <div class="tooltip-title">Что это</div>
-                <div class="tooltip-text">Повышающий преобразователь, который из 12 В делает 24 В для насоса. Нужен для питания насоса без перегрузки 12 В линии.</div>
-                <div class="tooltip-title">Требование</div>
-                <div class="tooltip-text">Выход 24 В, ≥5 А, КПД ≥0.9. Входной ток до ~9 А допускается кратковременно.</div>
-              </div>
-            </div>
-            <div class="flow-arrow vertical">↓</div>
-            <div class="diagram-node node-rail info-tooltip">
-              Шина 24V_PUMP
-              <div class="node-tooltip">
-                <div class="tooltip-title">Что это</div>
-                <div class="tooltip-text">Шина — общий провод питания для группы устройств. Нужна для распределения 24 В только на насос.</div>
-                <div class="tooltip-title">Требование</div>
-                <div class="tooltip-text">Маркировка 24V_PUMP обязательна, ток по ветви рассчитывается под насос.</div>
-              </div>
-            </div>
-            <div class="flow-arrow vertical">↓</div>
-            <div class="diagram-node node-load info-tooltip">
-              Насос 24 В
-              <div class="node-tooltip">
-                <div class="tooltip-title">Что это</div>
-                <div class="tooltip-text">Электродвигатель, создающий циркуляцию воды в контуре. Нужен для постоянного потока через стенд.</div>
-                <div class="tooltip-title">Требование</div>
-                <div class="tooltip-text">2 А ном, до 4 А пик. Защита от выбросов (TVS/flyback) обязательна.</div>
-              </div>
-            </div>
-          </div>
-          <div class="power-branch">
-            <div class="power-branch-title">Ветвь DC/DC Buck</div>
-            <div class="diagram-node node-converter info-tooltip">
-              DC/DC Buck 12→5 В
-              <div class="node-tooltip">
-                <div class="tooltip-title">Что это</div>
-                <div class="tooltip-text">Понижающий преобразователь, который делает 5 В для электроники. Нужен для безопасного питания микроконтроллера.</div>
-                <div class="tooltip-title">Требование</div>
-                <div class="tooltip-text">Выход 5 В, ≥3 А. Стабилизация напряжения обязательна.</div>
-              </div>
-            </div>
-            <div class="flow-arrow vertical">↓</div>
-            <div class="diagram-node node-rail info-tooltip">
-              Шина 5V_CTRL
-              <div class="node-tooltip">
-                <div class="tooltip-title">Что это</div>
-                <div class="tooltip-text">Отдельная линия питания логики. Нужна для стабильного питания контроллера и датчиков.</div>
-                <div class="tooltip-title">Требование</div>
-                <div class="tooltip-text">Маркировка 5V_CTRL обязательна. Отделение от силовых линий обязательно.</div>
-              </div>
-            </div>
-            <div class="flow-arrow vertical">↓</div>
-            <div class="diagram-node node-control info-tooltip">
-              ESP32 + датчики
-              <div class="node-tooltip">
-                <div class="tooltip-title">Что это</div>
-                <div class="tooltip-text">Контроллер и датчики, управляющие стендом и считывающие параметры. Нужны для управления и контроля процессов.</div>
-                <div class="tooltip-title">Требование</div>
-                <div class="tooltip-text">Питание 5 В с запасом по току для пиков Wi‑Fi. Просадки напряжения запрещены.</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="power-estop">
-        <div class="diagram-node node-safety info-tooltip">
-          E-Stop (аппаратный аварийный разрыв)
-          <div class="node-tooltip">
-            <div class="tooltip-title">Что это</div>
-            <div class="tooltip-text">Аварийная кнопка, физически разрывающая питание силовых ветвей. Нужна для немедленного безопасного отключения при аварии.</div>
-            <div class="tooltip-title">Требование</div>
-            <div class="tooltip-text">Должна отключать нагреватель и насос аппаратно. Программное отключение не заменяет E-Stop.</div>
-          </div>
-        </div>
-        <p class="scheme-note">E-Stop должен обесточивать силовые ветви независимо от состояния прошивки и управляющей логики.</p>
+          <div class="details-grid" id="detailsContent"></div>
+        </aside>
       </div>
     </section>
 
@@ -420,5 +340,298 @@
       </div>
     </section>
   </div>
+  <script>
+    const powerNodes = [
+      {
+        id: 'mains_230vac',
+        title: 'Розетка 230 В AC, 50 Гц',
+        imageSrc: './mains_230vac.png',
+        className: 'node-ac',
+        position: { x: 10, y: 18 },
+        tooltip: {
+          what: 'Переменное напряжение из розетки. Нужно для питания всего стенда и формирует входной уровень сети.',
+          requirement: 'Диапазон 207–253 В, 50 Гц. Отклонения вне диапазона запрещены для работы стенда.'
+        },
+        details: {
+          subtitle: 'Ввод сетевого питания',
+          summary: 'Сетевое напряжение поступает с внешней розетки и является единственным входом питания стенда.',
+          requirements: ['Диапазон 207–253 В, 50 Гц.', 'Отклонения вне диапазона запрещены для работы стенда.'],
+          notes: 'Сетевой ввод отделён от внутренних SELV-цепей и требует отдельной защиты.'
+        }
+      },
+      {
+        id: 'psu_acdc_12v',
+        title: 'AC/DC источник 12 В (SELV), 20 А',
+        imageSrc: './psu_acdc_12v.png',
+        className: 'node-converter',
+        position: { x: 28, y: 18 },
+        tooltip: {
+          what: 'Блок питания, который превращает 230 В AC в безопасные 12 В DC. SELV означает «безопасное сверхнизкое напряжение» для человека и нужно для защиты пользователя.',
+          requirement: '12 В, ≥20 А (≥240 Вт). Защиты OCP/OVP/OTP/SCP обязательны.'
+        },
+        details: {
+          subtitle: 'Ключевой источник 12 В',
+          summary: 'Обеспечивает все внутренние линии 12 В и отделяет сеть от безопасных цепей.',
+          requirements: ['12 В, ≥20 А (≥240 Вт).', 'Защиты OCP/OVP/OTP/SCP обязательны.'],
+          notes: 'SELV подтверждает безопасный уровень напряжения для пользователя.'
+        }
+      },
+      {
+        id: 'bus_12v_pwr',
+        title: 'Шина 12V_PWR',
+        imageSrc: './bus_12v_pwr.png',
+        className: 'node-rail',
+        position: { x: 46, y: 18 },
+        tooltip: {
+          what: 'Главная внутренняя шина 12 В, от которой питаются силовая ветвь нагревателя и преобразователи.',
+          requirement: 'Маркировка 12V_PWR обязательна. Вводной ток рассчитывается под суммарную нагрузку.'
+        },
+        details: {
+          subtitle: 'Главная силовая шина',
+          summary: 'Собирает 12 В после БП и раздаёт питание на три основные ветви стенда.',
+          requirements: ['Маркировка 12V_PWR обязательна.', 'Вводной ток 20–25 А должен покрывать суммарную нагрузку.'],
+          notes: 'От этой точки выполняется разветвление на Boost, Buck и силовой ключ нагревателя.'
+        }
+      },
+      {
+        id: 'dcdc_boost_12_24',
+        title: 'DC/DC Boost 12→24 В',
+        imageSrc: './dcdc_boost_12_24.png',
+        className: 'node-converter',
+        position: { x: 28, y: 42 },
+        tooltip: {
+          what: 'Повышающий преобразователь, который из 12 В делает 24 В для насоса. Нужен для питания насоса без перегрузки 12 В линии.',
+          requirement: 'Выход 24 В, ≥5 А, КПД ≥0.9. Входной ток до ~9 А допускается кратковременно.'
+        },
+        details: {
+          subtitle: 'Преобразователь для насоса',
+          summary: 'Повышает 12 В до 24 В, чтобы насос работал в своём номинальном режиме.',
+          requirements: ['Выход 24 В, ≥5 А, КПД ≥0.9.', 'Входной ток до ~9 А допускается кратковременно.'],
+          notes: 'Повышение напряжения снижает нагрузку на 12 В линию при работе насоса.'
+        }
+      },
+      {
+        id: 'bus_24v_pump',
+        title: 'Шина 24V_PUMP',
+        imageSrc: './bus_24v_pump.png',
+        className: 'node-rail',
+        position: { x: 28, y: 59 },
+        tooltip: {
+          what: 'Шина — общий провод питания для группы устройств. Нужна для распределения 24 В только на насос.',
+          requirement: 'Маркировка 24V_PUMP обязательна, ток по ветви рассчитывается под насос.'
+        },
+        details: {
+          subtitle: 'Линия питания насоса',
+          summary: 'Выделенная 24 В шина, к которой подключается только насос и его защита.',
+          requirements: ['Маркировка 24V_PUMP обязательна.', 'Ток по ветви рассчитывается под насос.'],
+          notes: 'Отдельная шина облегчает диагностику и защищает другие цепи.'
+        }
+      },
+      {
+        id: 'pump_24v',
+        title: 'Насос 24 В',
+        imageSrc: './pump_24v.png',
+        className: 'node-load',
+        position: { x: 28, y: 76 },
+        tooltip: {
+          what: 'Электродвигатель, создающий циркуляцию воды в контуре. Нужен для постоянного потока через стенд.',
+          requirement: '2 А ном, до 4 А пик. Защита от выбросов (TVS/flyback) обязательна.'
+        },
+        details: {
+          subtitle: 'Основная нагрузка контура',
+          summary: 'Обеспечивает циркуляцию воды и поддерживает тепловой режим стенда.',
+          requirements: ['2 А ном, до 4 А пик.', 'Защита от выбросов (TVS/flyback) обязательна.'],
+          notes: 'Насос управляется режимом включение/выключение без ШИМ.'
+        }
+      },
+      {
+        id: 'mosfet_power_switch',
+        title: 'MOSFET-ключ',
+        imageSrc: './mosfet_power_switch.png',
+        className: 'node-control',
+        position: { x: 55, y: 42 },
+        tooltip: {
+          what: 'Электронный выключатель, который быстро включает и выключает ток. Нужен для точного управления мощностью.',
+          requirement: 'Vds ≥ 40–60 В, токовый запас 3–5×, тепловой отвод обязателен.'
+        },
+        details: {
+          subtitle: 'Силовой ключ нагревателя',
+          summary: 'Коммутирует ток нагревателя под управлением контроллера и обеспечивает ШИМ-регулирование.',
+          requirements: ['Vds ≥ 40–60 В.', 'Токовый запас 3–5×.', 'Тепловой отвод обязателен.'],
+          notes: 'Релейное управление запрещено — используется только электронный ключ.'
+        }
+      },
+      {
+        id: 'heater_12v',
+        title: 'Нагреватель 12 В',
+        imageSrc: './heater_12v.png',
+        className: 'node-load',
+        position: { x: 55, y: 59 },
+        tooltip: {
+          what: 'Нагревательный элемент, превращающий электричество в тепло. Нужен для нагрева воды в контуре.',
+          requirement: 'Мощность 80–100 Вт, ток 6.7–8.3 А. MOSFET-ключ + PWM обязателен, предохранитель 10–15 А.'
+        },
+        details: {
+          subtitle: 'Силовая тепловая нагрузка',
+          summary: 'Отвечает за нагрев рабочей среды и требует точного управления мощностью.',
+          requirements: ['Мощность 80–100 Вт, ток 6.7–8.3 А.', 'MOSFET-ключ + PWM обязателен.', 'Предохранитель 10–15 А обязателен.'],
+          notes: 'Нагрев запрещён при отсутствии циркуляции воды.'
+        }
+      },
+      {
+        id: 'dcdc_buck_12_5',
+        title: 'DC/DC Buck 12→5 В',
+        imageSrc: './dcdc_buck_12_5.png',
+        className: 'node-converter',
+        position: { x: 80, y: 42 },
+        tooltip: {
+          what: 'Понижающий преобразователь, который делает 5 В для электроники. Нужен для безопасного питания микроконтроллера.',
+          requirement: 'Выход 5 В, ≥3 А. Стабилизация напряжения обязательна.'
+        },
+        details: {
+          subtitle: 'Питание логики',
+          summary: 'Формирует стабильные 5 В для микроконтроллера и датчиков.',
+          requirements: ['Выход 5 В, ≥3 А.', 'Стабилизация напряжения обязательна.'],
+          notes: 'Любые просадки питания на логике запрещены.'
+        }
+      },
+      {
+        id: 'bus_5v_ctrl',
+        title: 'Шина 5V_CTRL',
+        imageSrc: './bus_5v_ctrl.png',
+        className: 'node-rail',
+        position: { x: 80, y: 59 },
+        tooltip: {
+          what: 'Отдельная линия питания логики. Нужна для стабильного питания контроллера и датчиков.',
+          requirement: 'Маркировка 5V_CTRL обязательна. Отделение от силовых линий обязательно.'
+        },
+        details: {
+          subtitle: 'Логическая шина',
+          summary: 'Разводит 5 В только на управляющую электронику без силовых нагрузок.',
+          requirements: ['Маркировка 5V_CTRL обязательна.', 'Отделение от силовых линий обязательно.'],
+          notes: 'Используется для питания контроллера и датчиков.'
+        }
+      },
+      {
+        id: 'esp32_sensors',
+        title: 'ESP32 + датчики',
+        imageSrc: './esp32_sensors.png',
+        className: 'node-control',
+        position: { x: 80, y: 76 },
+        tooltip: {
+          what: 'Контроллер и датчики, управляющие стендом и считывающие параметры. Нужны для управления и контроля процессов.',
+          requirement: 'Питание 5 В с запасом по току для пиков Wi‑Fi. Просадки напряжения запрещены.'
+        },
+        details: {
+          subtitle: 'Управление и телеметрия',
+          summary: 'Контроллер формирует управляющие сигналы и собирает данные с датчиков.',
+          requirements: ['Питание 5 В с запасом по току для пиков Wi‑Fi.', 'Просадки напряжения запрещены.'],
+          notes: 'Все управляющие цепи питаются исключительно от 5V_CTRL.'
+        }
+      }
+    ];
+
+    const powerEdges = [
+      { from: 'mains_230vac', to: 'psu_acdc_12v' },
+      { from: 'psu_acdc_12v', to: 'bus_12v_pwr' },
+      { from: 'bus_12v_pwr', to: 'dcdc_boost_12_24' },
+      { from: 'dcdc_boost_12_24', to: 'bus_24v_pump' },
+      { from: 'bus_24v_pump', to: 'pump_24v' },
+      { from: 'bus_12v_pwr', to: 'mosfet_power_switch' },
+      { from: 'mosfet_power_switch', to: 'heater_12v' },
+      { from: 'bus_12v_pwr', to: 'dcdc_buck_12_5' },
+      { from: 'dcdc_buck_12_5', to: 'bus_5v_ctrl' },
+      { from: 'bus_5v_ctrl', to: 'esp32_sensors' }
+    ];
+
+    const diagramNodes = document.getElementById('powerDiagramNodes');
+    const diagramSvg = document.querySelector('.diagram-arrows');
+    const detailsTitle = document.getElementById('detailsTitle');
+    const detailsSubtitle = document.getElementById('detailsSubtitle');
+    const detailsContent = document.getElementById('detailsContent');
+
+    const nodeMap = new Map(powerNodes.map((node) => [node.id, node]));
+
+    function renderNodes() {
+      diagramNodes.innerHTML = powerNodes.map((node) => `
+        <button
+          class="diagram-node-card info-tooltip ${node.className}"
+          style="--node-x: ${node.position.x}%; --node-y: ${node.position.y}%;"
+          type="button"
+          data-node-id="${node.id}"
+          aria-pressed="false"
+        >
+          <img src="${node.imageSrc}" alt="${node.title}" />
+          <span>${node.title}</span>
+          <div class="node-tooltip">
+            <div class="tooltip-title">Что это</div>
+            <div class="tooltip-text">${node.tooltip.what}</div>
+            <div class="tooltip-title">Требование</div>
+            <div class="tooltip-text">${node.tooltip.requirement}</div>
+          </div>
+        </button>
+      `).join('');
+    }
+
+    function renderEdges() {
+      const lines = powerEdges.map((edge) => {
+        const from = nodeMap.get(edge.from);
+        const to = nodeMap.get(edge.to);
+        if (!from || !to) return '';
+        return `<line x1="${from.position.x}" y1="${from.position.y}" x2="${to.position.x}" y2="${to.position.y}" stroke="#3a6bc9" stroke-width="0.6" marker-end="url(#arrowhead)" />`;
+      }).join('');
+
+      diagramSvg.innerHTML = `
+        <defs>
+          <marker id="arrowhead" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="#3a6bc9"></path>
+          </marker>
+        </defs>
+        ${lines}
+      `;
+    }
+
+    function renderDetails(node) {
+      detailsTitle.textContent = node.title;
+      detailsSubtitle.textContent = node.details.subtitle;
+      detailsContent.innerHTML = `
+        <div class="details-card">
+          <h4>Что это</h4>
+          <p>${node.details.summary}</p>
+        </div>
+        <div class="details-card">
+          <h4>Требования</h4>
+          <ul>
+            ${node.details.requirements.map((item) => `<li>${item}</li>`).join('')}
+          </ul>
+        </div>
+        <div class="details-card">
+          <h4>Примечание</h4>
+          <p>${node.details.notes}</p>
+        </div>
+      `;
+    }
+
+    function setActiveNode(nodeId) {
+      const node = nodeMap.get(nodeId) || powerNodes[0];
+      document.querySelectorAll('.diagram-node-card').forEach((element) => {
+        const isActive = element.dataset.nodeId === node.id;
+        element.classList.toggle('active', isActive);
+        element.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+      });
+      renderDetails(node);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderNodes();
+      renderEdges();
+      setActiveNode('bus_12v_pwr');
+      diagramNodes.addEventListener('click', (event) => {
+        const button = event.target.closest('.diagram-node-card');
+        if (!button) return;
+        setActiveNode(button.dataset.nodeId);
+      });
+    });
+  </script>
 </body>
 </html>

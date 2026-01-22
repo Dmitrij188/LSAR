@@ -235,6 +235,55 @@
     .power-page .diagram-node.node-load { background: #ffe8e8; border-color: #f08a8a; }
     .power-page .diagram-node.node-control { background: #f0ecff; border-color: #9d8de8; }
     .power-page .diagram-node.node-safety { background: #fff7d6; border-color: #f0c44c; }
+    .power-page { --diagram-node-size: clamp(88px, 8vw, 110px); }
+    .power-layout { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+    .power-diagram-panel { display: grid; gap: 10px; }
+    .diagram-canvas { position: relative; border: 1px solid var(--border); border-radius: 12px; background: #f9fbff; padding: 14px; height: min(70vh, 520px); overflow: hidden; }
+    .diagram-arrows { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+    .diagram-nodes { position: relative; width: 100%; height: 100%; z-index: 2; }
+    .diagram-node-card {
+      position: absolute;
+      left: calc(var(--node-x) - var(--diagram-node-size) / 2);
+      top: calc(var(--node-y) - var(--diagram-node-size) / 2);
+      width: var(--diagram-node-size);
+      height: var(--diagram-node-size);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    }
+    .diagram-node-card img { width: 44px; height: 44px; object-fit: contain; }
+    .diagram-node-card:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.12); }
+    .diagram-node-card.active { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(62, 117, 216, 0.2); }
+    .diagram-node-card.node-ac { background: #fff3e0; border-color: #f3a45f; }
+    .diagram-node-card.node-converter { background: #e6f4ff; border-color: #7cb9f1; }
+    .diagram-node-card.node-rail { background: #e9f9ef; border-color: #79c98f; }
+    .diagram-node-card.node-load { background: #ffe8e8; border-color: #f08a8a; }
+    .diagram-node-card.node-control { background: #f0ecff; border-color: #9d8de8; }
+    .diagram-node-card.node-safety { background: #fff7d6; border-color: #f0c44c; }
+    .power-details-panel { position: relative; display: grid; gap: 12px; }
+    .details-header { display: grid; gap: 6px; }
+    .details-subtitle { margin: 0; color: var(--muted); font-size: 13px; }
+    .details-grid { display: grid; gap: 10px; }
+    .details-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+    .details-card h4 { margin: 0 0 6px; font-size: 14px; }
+    .details-card ul { margin: 0; padding-left: 18px; color: var(--muted); font-size: 13px; }
+    @media (max-width: 1024px) {
+      .power-layout { grid-template-columns: 1fr; }
+      .diagram-canvas { height: 480px; }
+    }
     .checklist-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
     .checklist-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 12px 12px 12px 36px; position: relative; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
     .checklist-card::before { content: '✓'; position: absolute; left: 12px; top: 12px; color: var(--accent); font-weight: 700; }
