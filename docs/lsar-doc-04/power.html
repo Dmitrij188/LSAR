@@ -21,9 +21,12 @@
     <section class="card hero-card">
       <p class="eyebrow">Интерактивные схемы питания</p>
       <h2>Питание стенда ЛСАР: утверждённая архитектура и обязательные требования</h2>
-      <p class="section-lead">Страница фиксирует единственную архитектуру питания и все обязательные требования. Наведите курсор на элементы, чтобы увидеть объяснение, защиты, управление нагрузками и требования безопасности.</p>
+      <p class="section-lead">Страница фиксирует единственную архитектуру питания и набор обязательных защит. Наведите курсор на элементы, чтобы увидеть простое объяснение и точные требования.</p>
       <div class="toc">
         <a class="toc-btn" href="#section-a">A. Архитектура питания</a>
+        <a class="toc-btn" href="#section-b">B. Защиты и аварийное отключение</a>
+        <a class="toc-btn" href="#section-c">C. Управление нагрузками</a>
+        <a class="toc-btn" href="#section-d">D. Требования безопасности</a>
       </div>
     </section>
 
@@ -73,6 +76,269 @@
         </aside>
       </div>
     </section>
+
+    <section id="section-b" class="card">
+      <div class="section-heading">
+        <h2>B) Защиты и аварийное отключение (обязательные)</h2>
+        <div class="info-tooltip section-info-tooltip">
+          <button class="section-info-button" type="button" aria-label="Пояснение для раздела B">!</button>
+          <div class="node-tooltip">
+            <div class="tooltip-text">Этот раздел про «страховки» питания: элементы, которые отключают или глушат аварии. Они физически стоят на входе 12 В, на отдельных ветвях и рядом с силовыми линиями внутри корпуса. Зачем это нужно: чтобы поломка одного узла не выводила из строя весь стенд и чтобы скачки напряжения не повреждали электронику. Если защит не будет, при коротком замыкании или броске тока можно потерять сразу всё питание и повредить оборудование. Это сделано так, потому что локальные защиты быстрее и безопаснее ограничивают проблему на месте.</div>
+          </div>
+        </div>
+      </div>
+      <p class="note">Защиты строятся селективно, чтобы авария в одной ветви не отключала всю систему.</p>
+
+      <div class="power-flow">
+        <div class="diagram-node node-rail info-tooltip">
+          Ввод 12 В: 20–25 А
+          <div class="node-tooltip">
+            <div class="tooltip-title">Что это</div>
+            <div class="tooltip-text">Вводной предохранитель/автомат на линии 12 В. Нужен для защиты общего источника питания при перегрузке.</div>
+            <div class="tooltip-title">Требование</div>
+            <div class="tooltip-text">Номинал 20–25 А, отключение при перегрузке или КЗ обязательно.</div>
+          </div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="power-branch-grid">
+          <div class="power-branch">
+            <div class="power-branch-title">Нагреватель</div>
+            <div class="diagram-node node-safety info-tooltip">
+              Ветвь нагревателя: 10–15 А
+              <div class="node-tooltip">
+                <div class="tooltip-title">Что это</div>
+                <div class="tooltip-text">Отдельный предохранитель для ветви 12V_PWR. Нужен для локализации аварий в нагревателе.</div>
+                <div class="tooltip-title">Требование</div>
+                <div class="tooltip-text">Номинал 10–15 А. Селективность с вводом обязательна.</div>
+              </div>
+            </div>
+          </div>
+          <div class="power-branch">
+            <div class="power-branch-title">Boost (вход 12 В)</div>
+            <div class="diagram-node node-safety info-tooltip">
+              Ветвь Boost: ~10 А
+              <div class="node-tooltip">
+                <div class="tooltip-title">Что это</div>
+                <div class="tooltip-text">Ограничение тока для входа повышающего преобразователя. Нужно для защиты общего 12 В ввода.</div>
+                <div class="tooltip-title">Требование</div>
+                <div class="tooltip-text">Ограничение ~10 А, селективность с вводным автоматом обязательна.</div>
+              </div>
+            </div>
+          </div>
+          <div class="power-branch">
+            <div class="power-branch-title">Логика 5 В</div>
+            <div class="diagram-node node-safety info-tooltip">
+              Ветвь 5 В: 2–3 А
+              <div class="node-tooltip">
+                <div class="tooltip-title">Что это</div>
+                <div class="tooltip-text">Предохранитель для линии 5V_CTRL. Нужен для защиты электроники от короткого замыкания.</div>
+                <div class="tooltip-title">Требование</div>
+                <div class="tooltip-text">Номинал 2–3 А. Селективность с вводом обязательна.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="power-protection-notes">
+        <div class="power-protection-card info-tooltip">
+          TVS на 12 В и 24 В
+          <div class="node-tooltip">
+            <div class="tooltip-title">Что это</div>
+            <div class="tooltip-text">TVS — защитный диод, который гасит короткие всплески напряжения. Нужен для защиты питания от перенапряжений.</div>
+            <div class="tooltip-title">Требование</div>
+            <div class="tooltip-text">TVS должен быть установлен на шинах 12 В и 24 В.</div>
+          </div>
+        </div>
+        <div class="power-protection-card info-tooltip">
+          PE/заземление корпуса
+          <div class="node-tooltip">
+            <div class="tooltip-title">Что это</div>
+            <div class="tooltip-text">Защитный проводник, соединяющий металлический корпус с землёй. Нужен для безопасности при пробое изоляции.</div>
+            <div class="tooltip-title">Требование</div>
+            <div class="tooltip-text">PE должен быть подключён к корпусу при БП класса I. Отсутствие PE запрещено.</div>
+          </div>
+        </div>
+        <div class="power-protection-card info-tooltip">
+          EMI-фильтр на входе
+          <div class="node-tooltip">
+            <div class="tooltip-title">Что это</div>
+            <div class="tooltip-text">Фильтр, снижающий помехи от силовых цепей в сеть и в электронику. Нужен для устойчивой работы и соответствия нормам помех.</div>
+            <div class="tooltip-title">Требование</div>
+            <div class="tooltip-text">EMI-фильтр должен быть предусмотрен на входе 230 В.</div>
+          </div>
+        </div>
+        <div class="power-protection-card info-tooltip">
+          E-Stop: разрыв силовых ветвей
+          <div class="node-tooltip">
+            <div class="tooltip-title">Что это</div>
+            <div class="tooltip-text">Аппаратное отключение питания нагревателя и насоса одной кнопкой. Нужен для безопасной остановки при аварии.</div>
+            <div class="tooltip-title">Требование</div>
+            <div class="tooltip-text">E-Stop должен разрывать силовые ветви, а не только сигнал управления.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="section-c" class="card">
+      <div class="section-heading">
+        <h2>C) Управление нагрузками (обязательное)</h2>
+        <div class="info-tooltip section-info-tooltip">
+          <button class="section-info-button" type="button" aria-label="Пояснение для раздела C">!</button>
+          <div class="node-tooltip">
+            <div class="tooltip-text">Этот раздел объясняет, как стенд включает и регулирует свои основные «потребители» — нагреватель и насос. Физически это электронные ключи и управляющая плата внутри корпуса, которые подают питание на силовые линии. Это нужно, чтобы точно дозировать мощность нагревателя и надёжно включать насос по командам контроллера. Если управления не будет, нагрузка станет либо постоянно включённой, либо будет работать рывками и с перегревом. Такой подход выбран, потому что электронные ключи дают плавное, быстрое и безопасное управление без механических реле.</div>
+          </div>
+        </div>
+      </div>
+      <p class="note">Управление выполняется электронными ключами. Релейные переключения в силовых ветвях запрещены.</p>
+
+      <div class="power-control-grid">
+        <div class="power-control-card">
+          <h3>Нагреватель: MOSFET-ключ + PWM (ШИМ)</h3>
+          <div class="power-chip-row">
+            <div class="power-protection-card info-tooltip">
+              PWM/ШИМ
+              <div class="node-tooltip">
+                <div class="tooltip-title">Что это</div>
+                <div class="tooltip-text">Быстрое включение и выключение сигнала. Нужен для плавной регулировки мощности без перегрева.</div>
+                <div class="tooltip-title">Требование</div>
+                <div class="tooltip-text">PWM/ШИМ должен применяться для управления нагревателем.</div>
+              </div>
+            </div>
+          </div>
+          <div class="power-flow">
+            <div class="diagram-node node-control info-tooltip">
+              ESP32
+              <div class="node-tooltip">
+                <div class="tooltip-title">Что это</div>
+                <div class="tooltip-text">Микроконтроллер, который управляет мощностью нагревателя. Нужен для формирования управляющего PWM сигнала.</div>
+                <div class="tooltip-title">Требование</div>
+                <div class="tooltip-text">Выдаёт PWM/ШИМ сигнал для регулирования мощности нагрева.</div>
+              </div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="diagram-node node-control info-tooltip">
+              MOSFET-ключ
+              <div class="node-tooltip">
+                <div class="tooltip-title">Что это</div>
+                <div class="tooltip-text">Электронный выключатель, который быстро включает и выключает ток. Нужен для точного управления мощностью.</div>
+                <div class="tooltip-title">Требование</div>
+                <div class="tooltip-text">Vds ≥ 40–60 В, токовый запас 3–5×, тепловой отвод обязателен.</div>
+              </div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="diagram-node node-load info-tooltip">
+              Нагреватель 12 В
+              <div class="node-tooltip">
+                <div class="tooltip-title">Что это</div>
+                <div class="tooltip-text">Тепловая нагрузка стенда, требующая плавной регулировки мощности. Нужна для нагрева воды по заданному режиму.</div>
+                <div class="tooltip-title">Требование</div>
+                <div class="tooltip-text">PWM/ШИМ обязателен. Предохранитель 10–15 А обязателен.</div>
+              </div>
+            </div>
+          </div>
+          <p class="scheme-note">PWM (ШИМ) — это быстрое включение/выключение для регулировки мощности. Оно снижает перегрев и повышает стабильность температуры.</p>
+        </div>
+
+        <div class="power-control-card">
+          <h3>Насос 24 В: включение/выключение</h3>
+          <div class="power-flow">
+            <div class="diagram-node node-control info-tooltip">
+              ESP32
+              <div class="node-tooltip">
+                <div class="tooltip-title">Что это</div>
+                <div class="tooltip-text">Контроллер включает и отключает насос по условиям работы стенда. Нужен для поддержания циркуляции.</div>
+                <div class="tooltip-title">Требование</div>
+                <div class="tooltip-text">Логика ON/OFF обязательна, управление через силовой ключ.</div>
+              </div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="diagram-node node-control info-tooltip">
+              MOSFET-ключ
+              <div class="node-tooltip">
+                <div class="tooltip-title">Что это</div>
+                <div class="tooltip-text">Электронный выключатель для питания насоса. Нужен для надёжной коммутации нагрузки.</div>
+                <div class="tooltip-title">Требование</div>
+                <div class="tooltip-text">Vds ≥ 60 В, токовый запас 3–5×. Тепловой отвод обязателен.</div>
+              </div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="diagram-node node-load info-tooltip">
+              Насос 24 В
+              <div class="node-tooltip">
+                <div class="tooltip-title">Что это</div>
+                <div class="tooltip-text">Двигатель для циркуляции воды. Нужен для движения воды через стенд.</div>
+                <div class="tooltip-title">Требование</div>
+                <div class="tooltip-text">Номинал 2 А, пик до 4 А. Защита от выбросов обязательна.</div>
+              </div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="diagram-node compact node-safety info-tooltip">
+              TVS/flyback
+              <div class="node-tooltip">
+                <div class="tooltip-title">Что это</div>
+                <div class="tooltip-text">Защита от импульсных скачков напряжения, которые возникают в индуктивной нагрузке. Нужна для защиты ключа и питания.</div>
+                <div class="tooltip-title">Требование</div>
+                <div class="tooltip-text">TVS или flyback-диод должны быть установлены рядом с насосом.</div>
+              </div>
+            </div>
+          </div>
+          <p class="scheme-note">Режим управления фиксирован: насос должен работать в режиме включение/выключение без иных режимов.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="section-d" class="card">
+      <div class="section-heading">
+        <h2>D) Требования безопасности (чек-лист)</h2>
+        <div class="info-tooltip section-info-tooltip">
+          <button class="section-info-button" type="button" aria-label="Пояснение для раздела D">!</button>
+          <div class="node-tooltip">
+            <div class="tooltip-text">Этот раздел — краткое объяснение базовых правил безопасности для всего стенда. Они относятся к тому, что находится внутри корпуса, на плате управления и в силовой части, где проходит питание. Это нужно, чтобы человек не получил поражение током, а оборудование не перегревалось и не повреждалось. Если эти правила игнорировать, любое обслуживание или авария могут стать опасными и привести к серьёзным поломкам. Такой список сделан, потому что безопасность важнее удобства, и эти пункты проверяются первыми.</div>
+          </div>
+        </div>
+      </div>
+      <p class="note">Все требования обязательны к исполнению.</p>
+
+      <div class="checklist-grid">
+        <div class="checklist-card">
+          <div class="checklist-title">Цепи SELV ≤ 24 В DC</div>
+          <div class="checklist-text">Что это: безопасные сверхнизкие напряжения внутри стенда.</div>
+          <div class="checklist-text">Зачем: снижают риск поражения током.</div>
+          <div class="checklist-text">Требование: все внутренние цепи должны быть ≤ 24 В DC, сетевые цепи конструктивно отделены.</div>
+        </div>
+        <div class="checklist-card">
+          <div class="checklist-title">PE/заземление металлических частей</div>
+          <div class="checklist-text">Что это: защитное соединение корпуса с землёй.</div>
+          <div class="checklist-text">Зачем: отводит ток при пробое и защищает пользователя.</div>
+          <div class="checklist-text">Требование: PE должен быть подключён при БП класса I. Отсутствие PE запрещено.</div>
+        </div>
+        <div class="checklist-card">
+          <div class="checklist-title">Интерлок по расходу/уровню</div>
+          <div class="checklist-text">Что это: блокировка нагрева без воды или циркуляции.</div>
+          <div class="checklist-text">Зачем: предотвращает перегрев и повреждение стенда.</div>
+          <div class="checklist-text">Требование: нагрев без подтверждённого расхода/уровня запрещён.</div>
+        </div>
+        <div class="checklist-card">
+          <div class="checklist-title">Два уровня отключения</div>
+          <div class="checklist-text">Что это: программное отключение и аппаратный E-Stop.</div>
+          <div class="checklist-text">Зачем: аварийная остановка должна работать даже при сбое ПО.</div>
+          <div class="checklist-text">Требование: оба уровня должны быть реализованы и независимы.</div>
+        </div>
+        <div class="checklist-card">
+          <div class="checklist-title">Маркировка шин питания</div>
+          <div class="checklist-text">Что это: обозначение линий 12V_PWR, 24V_PUMP, 5V_CTRL, GND, PE.</div>
+          <div class="checklist-text">Зачем: исключает ошибки при обслуживании и сборке.</div>
+          <div class="checklist-text">Требование: маркировка должна быть нанесена на проводах и клеммах.</div>
+        </div>
+        <div class="checklist-card">
+          <div class="checklist-title">Сечения проводов и разъёмы по току</div>
+          <div class="checklist-text">Что это: правильный подбор кабелей и коннекторов под нагрузку.</div>
+          <div class="checklist-text">Зачем: предотвращает перегрев и оплавление контактов.</div>
+          <div class="checklist-text">Требование: слабые разъёмы на силовых ветвях запрещены.</div>
+        </div>
+      </div>
+    </section>
   </div>
   <script>
     const powerNodes = [
@@ -89,13 +355,8 @@
         details: {
           subtitle: 'Ввод сетевого питания',
           summary: 'Сетевое напряжение поступает с внешней розетки и является единственным входом питания стенда.',
-          requirements: [
-            'Диапазон 207–253 В, 50 Гц.',
-            'Отклонения вне диапазона запрещены для работы стенда.',
-            'EMI-фильтр на входе 230 В обязателен.',
-            'PE/заземление корпуса при БП класса I обязательно.'
-          ],
-          notes: 'Сетевой ввод конструктивно отделён от внутренних SELV-цепей и требует отдельной защиты.'
+          requirements: ['Диапазон 207–253 В, 50 Гц.', 'Отклонения вне диапазона запрещены для работы стенда.'],
+          notes: 'Сетевой ввод отделён от внутренних SELV-цепей и требует отдельной защиты.'
         }
       },
       {
@@ -111,12 +372,8 @@
         details: {
           subtitle: 'Ключевой источник 12 В',
           summary: 'Обеспечивает все внутренние линии 12 В и отделяет сеть от безопасных цепей.',
-          requirements: [
-            '12 В, ≥20 А (≥240 Вт).',
-            'Защиты OCP/OVP/OTP/SCP обязательны.',
-            'Все внутренние цепи стенда должны быть SELV ≤ 24 В DC.'
-          ],
-          notes: 'SELV подтверждает безопасный уровень напряжения для пользователя, сетевые цепи конструктивно отделены.'
+          requirements: ['12 В, ≥20 А (≥240 Вт).', 'Защиты OCP/OVP/OTP/SCP обязательны.'],
+          notes: 'SELV подтверждает безопасный уровень напряжения для пользователя.'
         }
       },
       {
@@ -132,13 +389,8 @@
         details: {
           subtitle: 'Главная силовая шина',
           summary: 'Собирает 12 В после БП и раздаёт питание на три основные ветви стенда.',
-          requirements: [
-            'Маркировка 12V_PWR обязательна.',
-            'Вводной предохранитель/автомат 20–25 А обязателен.',
-            'TVS на шине 12 В обязателен.',
-            'Сечения проводов и разъёмы должны соответствовать суммарному току.'
-          ],
-          notes: 'От этой точки выполняется разветвление на Boost, Buck и силовой ключ нагревателя. Маркировка линий 12V_PWR, 24V_PUMP, 5V_CTRL, GND и PE обязательна. E-Stop должен разрывать силовые ветви нагревателя и насоса аппаратно.'
+          requirements: ['Маркировка 12V_PWR обязательна.', 'Вводной ток 20–25 А должен покрывать суммарную нагрузку.'],
+          notes: 'От этой точки выполняется разветвление на Boost, Buck и силовой ключ нагревателя.'
         }
       },
       {
@@ -154,11 +406,7 @@
         details: {
           subtitle: 'Преобразователь для насоса',
           summary: 'Повышает 12 В до 24 В, чтобы насос работал в своём номинальном режиме.',
-          requirements: [
-            'Выход 24 В, ≥5 А, КПД ≥0.9.',
-            'Входной ток до ~9 А допускается кратковременно.',
-            'Ограничение входного тока ~10 А и селективность с вводом обязательны.'
-          ],
+          requirements: ['Выход 24 В, ≥5 А, КПД ≥0.9.', 'Входной ток до ~9 А допускается кратковременно.'],
           notes: 'Повышение напряжения снижает нагрузку на 12 В линию при работе насоса.'
         }
       },
@@ -175,11 +423,7 @@
         details: {
           subtitle: 'Линия питания насоса',
           summary: 'Выделенная 24 В шина, к которой подключается только насос и его защита.',
-          requirements: [
-            'Маркировка 24V_PUMP обязательна.',
-            'Ток по ветви рассчитывается под насос.',
-            'TVS на шине 24 В обязателен.'
-          ],
+          requirements: ['Маркировка 24V_PUMP обязательна.', 'Ток по ветви рассчитывается под насос.'],
           notes: 'Отдельная шина облегчает диагностику и защищает другие цепи.'
         }
       },
@@ -196,11 +440,7 @@
         details: {
           subtitle: 'Основная нагрузка контура',
           summary: 'Обеспечивает циркуляцию воды и поддерживает тепловой режим стенда.',
-          requirements: [
-            '2 А ном, до 4 А пик.',
-            'Защита от выбросов (TVS/flyback) обязательна.',
-            'Режим управления: включение/выключение через силовой ключ.'
-          ],
+          requirements: ['2 А ном, до 4 А пик.', 'Защита от выбросов (TVS/flyback) обязательна.'],
           notes: 'Насос управляется режимом включение/выключение без ШИМ.'
         }
       },
@@ -234,12 +474,7 @@
         details: {
           subtitle: 'Силовая тепловая нагрузка',
           summary: 'Отвечает за нагрев рабочей среды и требует точного управления мощностью.',
-          requirements: [
-            'Мощность 80–100 Вт, ток 6.7–8.3 А.',
-            'MOSFET-ключ + PWM обязателен.',
-            'Предохранитель 10–15 А обязателен.',
-            'Нагрев без подтверждённого расхода/уровня запрещён.'
-          ],
+          requirements: ['Мощность 80–100 Вт, ток 6.7–8.3 А.', 'MOSFET-ключ + PWM обязателен.', 'Предохранитель 10–15 А обязателен.'],
           notes: 'Нагрев запрещён при отсутствии циркуляции воды.'
         }
       },
@@ -273,11 +508,7 @@
         details: {
           subtitle: 'Логическая шина',
           summary: 'Разводит 5 В только на управляющую электронику без силовых нагрузок.',
-          requirements: [
-            'Маркировка 5V_CTRL обязательна.',
-            'Отделение от силовых линий обязательно.',
-            'Предохранитель 2–3 А обязателен.'
-          ],
+          requirements: ['Маркировка 5V_CTRL обязательна.', 'Отделение от силовых линий обязательно.'],
           notes: 'Используется для питания контроллера и датчиков.'
         }
       },
@@ -294,13 +525,8 @@
         details: {
           subtitle: 'Управление и телеметрия',
           summary: 'Контроллер формирует управляющие сигналы и собирает данные с датчиков.',
-          requirements: [
-            'Питание 5 В с запасом по току для пиков Wi‑Fi.',
-            'Просадки напряжения запрещены.',
-            'PWM для нагревателя и ON/OFF для насоса обязательны.',
-            'Программное отключение и интерлок по расходу/уровню обязательны.'
-          ],
-          notes: 'Все управляющие цепи питаются исключительно от 5V_CTRL. Аппаратный E-Stop остаётся независимым уровнем аварийного отключения.'
+          requirements: ['Питание 5 В с запасом по току для пиков Wi‑Fi.', 'Просадки напряжения запрещены.'],
+          notes: 'Все управляющие цепи питаются исключительно от 5V_CTRL.'
         }
       }
     ];
