@@ -80,7 +80,13 @@
     .scheme-layout { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-start; }
     #scheme-container { position: relative; width: 100%; max-width: 860px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
     #scheme-container img { width: 100%; display: block; }
-    .scheme-area { flex: 1 1 480px; min-width: 320px; }
+    .scheme-area {
+      flex: 1 1 480px;
+      min-width: 320px;
+      max-height: 75vh;
+      overflow-y: auto;
+      padding-right: 6px;
+    }
     .scheme-info { flex: 1 1 320px; min-width: 280px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
     .scheme-node-marker { position: absolute; width: 18px; height: 18px; border-radius: 50%; background: #ff7043; border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.3); cursor: pointer; transform: translate(-50%, -50%); transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease; z-index: 2; }
     .scheme-node-marker:hover { transform: translate(-50%, -50%) scale(1.08); }
